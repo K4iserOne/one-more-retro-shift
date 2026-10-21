@@ -1,0 +1,778 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0a0e19"><title>ONE MORE: Retro Shift — v2.20</title><link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ONE MORE">
+<meta name="application-name" content="ONE MORE">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#090e19;color:#f7efc8;font-family:ui-monospace,Consolas,monospace;touch-action:manipulation}body{display:flex;justify-content:center}.shell{width:min(100%,510px);height:100dvh;min-height:480px;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 9px) 13px calc(env(safe-area-inset-bottom) + 9px);background:radial-gradient(ellipse at center,#1b2540,#090e19 70%)}header,.hud,.footer{display:flex;justify-content:space-between;align-items:center;gap:8px}.brand{color:#ffdd75;font-size:clamp(18px,5vw,24px);font-weight:900;letter-spacing:2px;text-shadow:3px 3px #683c74}.subtitle{font-size:10px;letter-spacing:1.8px;color:#79e5c2}.stats{text-align:right;font-size:12px;line-height:1.7}.stats b,.hud b{color:#ffdf7a}.hud{padding:13px 2px 4px;font-size:12px;color:#b9d0d9}.screen{position:relative;flex:1;min-height:210px;display:flex;align-items:center;justify-content:center;overflow:hidden}canvas{display:block;width:min(100%,min(61dvh,455px));height:auto;aspect-ratio:1;image-rendering:pixelated;touch-action:manipulation}.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#060a13aa;z-index:3}.hidden{display:none!important}.panel{width:min(96%,400px);max-height:96%;overflow:auto;padding:16px;background:#101a2bed;border:3px solid #7ce5be;box-shadow:6px 6px #49355b;text-align:center}.panel h2{font-size:22px;color:#ffde7b;margin:0 0 10px}.panel p{font-size:12px;line-height:1.5;margin:8px 0}.panel small{color:#a9c5d4;font-size:11px}.btn,.tap{border:0;background:#ffdf7b;color:#121a27;font:900 15px monospace;padding:12px;cursor:pointer;box-shadow:3px 3px #674d71}.btn{width:100%;margin-top:9px}.btn.secondary{background:#253650;color:#cde6e9;border:1px solid #537087}.btn:disabled{opacity:.4;cursor:not-allowed}.btn:active,.tap:active{transform:translate(2px,2px)}.footer{flex-direction:column;padding-bottom:5px;gap:7px}.tap{width:min(100%,400px);font-size:21px;padding:16px}.charge-label{width:min(100%,400px);display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:900;letter-spacing:1px;color:#79e5c2}.charge-label span:last-child{color:#ffdf7b}.meter{width:min(100%,400px);height:15px;border:2px solid #79e5c2;background:#223047;box-shadow:3px 3px #233b49;overflow:hidden}.meter>div{height:100%;width:0;background:#79e5c2}.tip{font-size:11px;color:#9ab5c8;min-height:14px;text-align:center}.card{display:block;width:100%;margin:7px 0;padding:11px;text-align:left;background:#1b2940;color:#f7efc8;border:2px solid #526b86;font:inherit;cursor:pointer}.card strong{color:#ffdf7b;font-size:13px}.card span{display:block;color:#b9cbd5;font-size:11px;line-height:1.5;margin-top:4px}.card:active{border-color:#8af5c7}.row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}.mut{color:#ff849c;font-weight:bold}.pill{display:inline-block;padding:3px 7px;border:1px solid #526b86;font-size:11px;color:#b9d0d9}.toast{position:absolute;top:12%;left:0;right:0;text-align:center;color:#ffdf7b;font-size:18px;font-weight:bold;text-shadow:2px 2px #111;opacity:0;pointer-events:none;z-index:2}.toast.show{animation:pop 1s ease-out forwards}@keyframes pop{0%{opacity:0;transform:translateY(12px)}15%{opacity:1}70%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}@media(max-height:640px){.hud{padding:5px 2px}.tap{padding:9px}.panel{padding:10px}.screen{min-height:160px}header{padding-top:0}}
+
+/* Officina: rarita in palette retro pixel */
+.btn.rarity-common{background:#e9edf3;color:#172034;border:2px solid #ffffff;box-shadow:3px 3px #8593a9;text-align:left;font-size:12px;line-height:1.5}
+.btn.rarity-rare{background:#153c77;color:#e5f2ff;border:2px solid #5ca8ff;box-shadow:3px 3px #19335c;text-align:left;font-size:12px;line-height:1.5}
+.btn.rarity-legendary{background:#4b3512;color:#ffe7a0;border:2px solid #efbd4b;box-shadow:3px 3px #7d5820;text-align:left;font-size:12px;line-height:1.5}
+.btn.rarity-common:disabled,.btn.rarity-rare:disabled,.btn.rarity-legendary:disabled{opacity:.65}
+.btn.rarity-header{margin-top:15px;padding:8px;border:0;box-shadow:none;cursor:default;text-align:left;font-size:13px;letter-spacing:1.2px}
+.btn.rarity-header.rarity-common{background:#dce2eb;color:#172034}
+.btn.rarity-header.rarity-rare{background:#285aab;color:#f4faff}
+.btn.rarity-header.rarity-legendary{background:#9d7427;color:#fff0bb}
+
+/* Carte con icone pixel-art, condivise fra Officina, Build e ricompense */
+.pixel-icon{display:inline-flex;align-items:center;justify-content:center;width:33px;height:33px;min-width:33px;border:2px solid currentColor;background:#111c30;box-shadow:3px 3px #070d17;font-size:22px;font-weight:900;line-height:1;color:#f2f3f5;text-shadow:2px 2px #3a4053}
+.pixel-icon.rare{color:#7abaff}.pixel-icon.legendary{color:#ffd26d}
+.btn .pixel-icon{vertical-align:middle;margin-right:9px}.btn .btn-text{vertical-align:middle}
+.card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:8px 0}
+.deck-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin:8px 0}
+.pick-card{font:inherit;cursor:pointer;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;min-height:115px;padding:8px 4px;border:2px solid #d9e0ec;background:#1a263c;color:#f0f3f8;overflow-wrap:anywhere}
+.pick-card.rare{border-color:#64aeff;color:#acd6ff}.pick-card.legendary{border-color:#e9b64b;color:#ffe4a2}
+.pick-card.selected{outline:2px solid #80f4c4;outline-offset:-5px;background:#28425b}
+.pick-card.discard{outline:2px solid #ff8294;outline-offset:-5px;background:#493044}
+.pick-card:disabled{opacity:.38;cursor:not-allowed}.pick-card .pixel-icon{margin:3px 0}
+.pick-card .card-name{font-size:10px;font-weight:900;line-height:1.25}.pick-card .card-desc{font-size:9px;line-height:1.3;color:#b7c9da}
+.deck-grid .pick-card{min-height:88px;padding:5px 2px}.deck-grid .pixel-icon{width:26px;height:26px;min-width:26px;font-size:17px}
+.section-label{font-size:10px;color:#9fdacb;text-align:left;letter-spacing:1px;margin:12px 0 4px}
+/* Descrizioni equipaggiate e confronto immediato */
+.owned-effects{display:grid;gap:4px;margin:7px 0 10px;text-align:left}
+.owned-effect{display:flex;gap:7px;align-items:flex-start;border:1px solid #435a75;background:#142238;padding:6px;font-size:10px;line-height:1.4;color:#bcd0df}
+.owned-effect strong{color:#f4ebcb;display:block;font-size:10px}
+.owned-effect.rare{border-left:3px solid #64aeff}.owned-effect.legendary{border-left:3px solid #e9b64b}.owned-effect.common{border-left:3px solid #d9e0ec}
+.owned-effect.discard{background:#4a2d40;border-color:#ff8294}
+.owned-effect .pixel-icon{width:23px;height:23px;min-width:23px;font-size:15px;box-shadow:2px 2px #070d17}
+.swap-compare{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0;text-align:left}
+.compare-side{padding:8px;background:#17263b;border:1px solid #5b7493;font-size:10px;line-height:1.45;overflow-wrap:anywhere}
+.compare-side.old{border-color:#ff8294}.compare-side.new{border-color:#80f4c4}
+.compare-side strong{display:block;margin:4px 0;color:#f5e6c5}
+.compare-side small{color:#adc6d9}
+.swap-preview{border:1px dashed #7599ae;background:#1b2940;padding:8px;font-size:11px;line-height:1.5;margin-top:8px}
+@media(max-width:390px){.pick-card .card-name{font-size:9px}.pick-card .card-desc{font-size:8px}.panel{padding:10px}.deck-grid{gap:3px}}
+
+/* Deck Builder v1.9: schede chiare, equipaggiamento e libreria separati */
+.build-instructions{font-size:11px;line-height:1.6;text-align:left;color:#bcd3e4;background:#16263d;border-left:3px solid #78eab9;padding:9px}
+.build-random{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;width:100%;padding:12px;margin:9px 0 13px;background:#283e58;border:2px solid #ffdf7b;color:#ffdf7b;font:900 13px monospace;cursor:pointer;box-shadow:3px 3px #111b2c}.build-random small{font-size:9px;color:#c4d8e8;font-weight:normal}.build-random:hover{background:#375574}
+/* Paired deck management actions */
+.build-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:9px 0 13px}
+.build-actions .build-random{margin:0;min-height:68px;padding:9px 5px;font-size:11px;box-shadow:2px 2px #111b2c}
+.build-delete{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;width:100%;min-height:68px;padding:9px 5px;background:#4a2535;border:2px solid #ff8493;color:#ffb4bd;font:900 11px monospace;cursor:pointer;box-shadow:2px 2px #111b2c}
+.build-delete small{font-size:9px;font-weight:normal;color:#f2c8d0}.build-delete:hover{background:#673345}
+.build-delete:disabled{opacity:.4;cursor:not-allowed}
+.build-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:12px 0}
+.build-tab{background:#22334b;color:#bed7e8;border:1px solid #516a85;padding:10px 2px;font:900 10px monospace;cursor:pointer}
+.build-tab.active{background:#ffdf7b;color:#172034;border-color:#fff3b6;box-shadow:2px 2px #8a6339}
+.build-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#ffdf7b;font-size:12px;text-align:left;margin:15px 0 7px}
+.build-heading span{color:#9ac4cb;font-size:10px}
+.build-equipped{display:grid;gap:5px}
+.build-slot{min-width:0}
+.build-card{width:100%;min-width:0;display:flex;align-items:center;gap:10px;background:#1b2940;color:#e9edf3;border:2px solid #d9e0ec;text-align:left;padding:9px;cursor:pointer;font-family:monospace}
+.build-card.rare{border-color:#64aeff}.build-card.legendary{border-color:#e9b64b}
+.build-card .pixel-icon{flex:none}
+.build-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.build-info strong{font-size:12px;line-height:1.3;overflow-wrap:anywhere}
+.build-info small{font-size:10px;line-height:1.45;color:#b9cadc;overflow-wrap:anywhere}
+.build-action{font-size:10px;font-weight:900;color:#80f4c4;white-space:nowrap}
+.build-equipped .build-action{color:#ff8294}
+.build-card.unavailable{opacity:.48;cursor:not-allowed}
+.build-empty{display:flex;align-items:center;gap:10px;border:2px dashed #496079;padding:10px;color:#839bb1;background:#152237}
+.build-empty>span{font-size:20px;color:#78eab9}.build-empty small{font-size:10px}
+.build-status{margin:8px 0;padding:9px;background:#263048;color:#ffdf7b;font-size:11px;font-weight:bold;text-align:center}
+.build-status.complete{background:#183b35;color:#80f4c4}
+.build-category{font-size:11px;font-weight:900;letter-spacing:1px;text-align:left;padding:7px;margin-top:9px;background:#e9edf3;color:#172034}
+.build-category.rare{background:#285aab;color:#fff}
+.build-category.legendary{background:#9d7427;color:#fff0bb}
+.build-library{display:grid;gap:5px;margin-top:6px}
+@media(max-width:420px){.build-card{gap:7px;padding:7px}.build-info strong{font-size:11px}.build-info small{font-size:9px}.build-action{font-size:9px}.build-tab{font-size:9px}}
+
+/* v2.1: elenco delle carte disponibili più compatto */
+.build-library{gap:4px}
+.build-library-card{align-items:center;gap:9px;padding:7px 9px}
+.build-library-card .pixel-icon{flex-shrink:0}
+.library-card-body{display:flex;flex-direction:column;flex:1;min-width:0;gap:5px}
+.library-card-top{display:flex;align-items:baseline;gap:9px;text-align:left;min-width:0}
+.library-card-top strong{font-size:11px;line-height:1.35;white-space:nowrap;flex:none}
+.library-card-desc{font-size:10px;color:#b9cadc;line-height:1.35;min-width:0;overflow-wrap:anywhere}
+.library-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #384b64;padding-top:5px;font-size:9px;color:#a7c1d3}
+.library-card-bottom b{color:#f0e9ca}
+.library-card-add{font-weight:900;color:#80f4c4;white-space:nowrap}
+.build-library-card.unavailable .library-card-add{color:#aab6c4}
+@media(max-width:420px){.library-card-top{gap:6px;flex-wrap:wrap}.library-card-top strong{font-size:10px}.library-card-desc{font-size:9px}.library-card-bottom{font-size:8px}}
+
+.run-deck-btn{align-self:center;background:#203c52;color:#ffdf7b;border:2px solid #ffdf7b;font:900 11px monospace;padding:10px 8px;cursor:pointer;white-space:nowrap;box-shadow:2px 2px #0b1221}
+.run-deck-btn:hover{background:#305775}.run-deck-btn[hidden]{display:none!important}
+.run-deck-overview{display:grid;gap:7px;text-align:left;margin:12px 0}.run-deck-item{display:flex;align-items:center;gap:10px;border:2px solid #cbd5e1;background:#182840;padding:10px}.run-deck-item.rare{border-color:#64aeff}.run-deck-item.legendary{border-color:#e9b64b}.run-deck-item .run-deck-detail{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}.run-deck-detail strong{font-size:12px}.run-deck-detail small{font-size:10px;line-height:1.45;color:#bfd1e2}.run-deck-detail em{font-size:9px;color:#ffdf7b;font-style:normal}
+@media(max-width:450px){.run-deck-btn{font-size:9px;padding:7px 4px}.brand{font-size:clamp(18px,5vw,27px)}}
+
+/* v2.4: ritorno rapido al menu dalle schermate principali */
+#panel{position:relative}
+#panel>h2{padding-left:40px;padding-right:20px}
+.menu-back-arrow{
+ position:absolute;top:8px;left:8px;z-index:5;
+ width:37px;height:37px;display:flex;align-items:center;justify-content:center;
+ border:2px solid #86e8c1;background:#192c42;color:#c4ffe5;
+ font:bold 25px/1 monospace;cursor:pointer;box-shadow:3px 3px 0 #08131e;
+}
+.menu-back-arrow:hover,.menu-back-arrow:focus-visible{background:#315e57;color:white;outline:2px solid #fff}
+.game-header-actions{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap}
+.game-settings-btn{min-width:39px;height:39px;background:#192b43;color:#c7ffde;border:2px solid #8de2ba;font:900 25px/1 monospace;cursor:pointer;box-shadow:3px 3px 0 #07111e}
+.game-settings-btn:hover,.game-settings-btn:focus-visible{background:#2b564b;outline:2px solid white}
+.game-settings-btn[hidden]{display:none}
+@media(max-width:430px){.game-header-actions{gap:4px}.game-settings-btn{min-width:34px;height:34px;font-size:21px}}
+.touch-setting{border:2px solid #58748b;background:#15273b;padding:12px;margin:12px 0;text-align:left}
+.touch-setting strong{color:#a4f2d3;font-size:12px}.touch-setting p{font-size:11px;line-height:1.5}
+.touch-setting small{display:block;font-size:10px;color:#afc5d6;margin-top:9px}
+.touch-setting button{width:100%;margin-top:5px}
+#gameFooter[hidden]{display:none!important}.main-menu-actions{position:absolute;bottom:calc(10px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;justify-content:center;align-items:center;gap:13px;z-index:5;width:max-content;max-width:95%}
+.menu-icon-btn{width:48px;height:44px;display:flex;align-items:center;justify-content:center;background:#192b43;color:#c7ffde;border:2px solid #8de2ba;font:900 26px/1 monospace;box-shadow:3px 3px 0 #07111e;cursor:pointer}
+.menu-icon-btn.sound-menu-btn{position:relative}
+.sound-menu-btn .speaker-pixel{width:29px;height:29px;display:block;fill:#c7ffde;image-rendering:pixelated}
+.sound-menu-btn .sound-cross{display:none;stroke:#ff818d;stroke-width:4;stroke-linecap:square}
+.sound-menu-btn.is-muted .sound-cross{display:block}
+.menu-icon-btn.faq-icon-btn{font-size:14px}.menu-icon-btn:disabled{opacity:.52;cursor:default}.menu-icon-btn:not(:disabled):hover,.menu-icon-btn:not(:disabled):focus-visible{background:#2b564b;outline:2px solid white}
+#overlay:has(.main-menu-actions){padding-bottom:68px}#overlay:has(.main-menu-actions) #panel{max-height:calc(100% - 58px)}
+@media(max-height:630px){.main-menu-actions{bottom:5px}.menu-icon-btn{height:36px;width:44px}#overlay:has(.main-menu-actions){padding-bottom:48px}}
+
+.game-over-panel h2{color:#ff8585;text-shadow:2px 2px #512b44;letter-spacing:2px}
+.over-subtitle{font-size:10px;letter-spacing:2px;color:#ff8585;margin:2px 0 5px}
+.over-tagline{color:#9bb5ca;font-size:10px!important;letter-spacing:1px}
+.over-stats{border:2px solid #3d536d;background:#17263a;padding:11px 10px;margin:12px 0}
+.over-caption{font-size:10px;color:#afc5d6;letter-spacing:1px}
+.over-score{font-size:clamp(26px,7vw,37px);font-weight:900;color:#ffe079;margin:4px 0;line-height:1.2}
+.over-record{font-size:11px;color:#c0d0de;margin:6px 0}
+.over-new{color:#b7ffca;animation:recordPop .7s ease-out both}
+@keyframes recordPop{0%{transform:scale(.7);opacity:0}55%{transform:scale(1.09);opacity:1}100%{transform:scale(1);opacity:1}}
+.over-grid{border-top:1px solid #3d536d;margin-top:10px;padding-top:10px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.over-grid b{display:block;color:#f1f5ff;font-size:19px}
+.over-grid small{display:block;font-size:9px;color:#9bb5ca;margin-top:3px}
+.over-cores{border:2px solid #4c9a77;background:#20382f;padding:9px;margin:9px 0;color:#b8ffd4}
+.over-cores strong{display:block;font-size:14px}
+.over-cores small{display:block;margin-top:4px;color:#c1d5c8}
+.game-over-panel>.btn:first-of-type{background:#79ecb3;color:#0b2720;box-shadow:3px 3px #34634e;font-size:17px}
+.game-over-panel>.btn:not(:first-of-type){display:inline-block;width:calc(50% - 7px);margin-right:5px;font-size:12px;padding:11px 3px}
+.game-over-panel>.btn:nth-last-child(1):nth-child(odd){width:100%}
+@media(max-height:620px){.game-over-panel{padding:10px}.over-stats{margin:6px 0;padding:7px}.over-grid{margin-top:5px;padding-top:5px}}
+
+.medal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.medal-tile{background:#192a40;border:2px solid #40546d;padding:10px 5px;min-width:0;text-align:center}
+.medal-tile.earned.bronze{border-color:#cd9066}.medal-tile.earned.silver{border-color:#cbd6e0}.medal-tile.earned.gold{border-color:#ffe079}.medal-tile.earned.platinum{border-color:#a9f6e2}
+.medal-pixel{font-size:28px;line-height:1.5;color:#60748c;text-shadow:2px 2px #07111e}
+.medal-tile.earned.bronze .medal-pixel{color:#cd9066}.medal-tile.earned.silver .medal-pixel{color:#cbd6e0}.medal-tile.earned.gold .medal-pixel{color:#ffe079}.medal-tile.earned.platinum .medal-pixel{color:#a9f6e2}
+.medal-tile strong,.medal-tile small,.medal-tile span{display:block;overflow-wrap:anywhere}
+.medal-tile strong{font-size:10px;letter-spacing:.3px;color:#e5effa;min-height:27px}
+.medal-tile small{font-size:9px;color:#a4b8cb;line-height:1.4;min-height:28px;margin:4px 0}
+.medal-tile span{font-size:9px;color:#a5b8cc}.medal-tile.earned span{color:#a4f2d3}
+.medal-count{font-size:12px;color:#ffe079;margin:7px 0}.medal-progress{height:9px;border:1px solid #40546d;background:#25374b}.medal-progress>div{height:100%;background:#a4f2d3}
+.medal-footnote{font-size:10px!important;line-height:1.5;color:#a4b8cb}
+.medal-notice{position:absolute;z-index:8;top:9%;left:6%;right:6%;display:flex;align-items:center;gap:10px;background:#17283c;border:2px solid #ffe079;box-shadow:3px 3px #07111e;padding:10px 12px;pointer-events:none;animation:medalPop .2s steps(3,end)}
+.medal-notice[hidden]{display:none!important}.medal-notice b{display:block;font-size:11px;color:#ffe079}.medal-notice small{display:block;font-size:10px;color:#e1ecf7;margin-top:4px}.medal-notice-icon{font-size:29px;color:#ffe079}.medal-notice-icon.bronze{color:#cd9066}.medal-notice-icon.silver{color:#cbd6e0}.medal-notice-icon.platinum{color:#a9f6e2}
+@keyframes medalPop{from{transform:translateY(-12px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.medal-svg{display:block;width:66px;height:70px;margin:0 auto;image-rendering:pixelated;filter:drop-shadow(3px 3px 0 #081421)}
+.medal-tile.locked .medal-svg{filter:grayscale(1) brightness(.5) drop-shadow(2px 2px 0 #081421);opacity:.65}
+.medal-tile.earned .medal-svg{filter:drop-shadow(3px 3px 0 #081421)}
+.medal-notice-icon .medal-svg{width:45px;height:49px}
+.medal-pixel{font-size:initial;line-height:normal;min-height:72px;display:flex;align-items:center;justify-content:center}
+@media(max-width:370px){.medal-svg{width:56px;height:62px}}
+
+/* Main menu v2.16: large, separated play modes */
+.home-panel{padding-bottom:8px}
+.home-panel>h2{margin-bottom:5px;color:#b6ffd1}
+.home-intro{font-size:10px;letter-spacing:1.2px;color:#86a3bd;text-align:center;margin:5px 0 15px}
+.home-modes{display:flex;flex-direction:column;gap:12px}
+.home-mode{width:100%;min-height:98px;display:flex;align-items:center;gap:12px;padding:13px 12px;text-align:left;border:3px solid;box-shadow:4px 4px 0 #08131e;cursor:pointer;font-family:inherit;transition:filter .12s,transform .12s}
+.home-mode:hover,.home-mode:focus-visible{filter:brightness(1.14);outline:2px solid #e6f8ff;outline-offset:2px}
+.home-mode:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #08131e}
+.home-rogue{background:#292542;border-color:#b7a0ff;color:#e0d5ff}
+.home-arcade{background:#203d35;border-color:#78eab9;color:#c3ffda}
+.home-mode-symbol{font-size:36px;line-height:1;min-width:38px;text-align:center}
+.home-mode-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.home-mode-text strong{font-size:19px;letter-spacing:1px;line-height:1.1}
+.home-mode-text small{font-size:11px;color:#c2c4d5;line-height:1.35}
+.home-arcade .home-mode-text small{color:#a5d2bc}
+.home-mode-text em{font-style:normal;font-size:10px;color:#e4d77f}
+.home-chevron{font-size:31px;font-weight:bold}
+.home-divider{display:flex;align-items:center;gap:9px;margin:23px 0 13px;color:#91a9bf;font-size:9px;letter-spacing:.4px;text-align:center}
+.home-divider:before,.home-divider:after{content:"";flex:1;height:1px;background:#40536b}
+.home-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.home-tools button{background:#19283c;color:#d4e4f0;border:2px solid #536b85;box-shadow:2px 2px 0 #08131e;padding:12px 3px;min-height:77px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:7px;font:900 10px/1.2 monospace;cursor:pointer}
+.home-tools button span{font-size:24px;color:#b9d1e6}
+.home-tools button:hover,.home-help:hover{background:#2a3d56}
+.home-core-count{color:#a6b8c8;font-size:10px;text-align:center;margin:12px 0 8px}
+.home-help{width:100%;background:#142238;color:#b9d1e6;border:1px solid #40536b;min-height:39px;font:900 11px monospace;cursor:pointer}
+@media(max-width:390px){.home-mode{min-height:85px;padding:9px 8px;gap:8px}.home-mode-text strong{font-size:16px}.home-mode-text small{font-size:10px}.home-mode-symbol{font-size:30px;min-width:32px}.home-divider{margin:15px 0 10px}.home-tools button{min-height:64px}}
+
+/* Mobile-first layout: viewport, safe areas and comfortable touch targets */
+html,body{width:100%;min-height:100%;overflow:hidden;overscroll-behavior:none}
+.shell{min-height:0;height:100vh;height:100dvh;max-height:100dvh;overflow:hidden}
+.screen{min-height:0;min-width:0;overflow:hidden}
+.overlay{min-height:0;padding:5px 3px;overflow:hidden}
+.panel{min-height:0;max-height:100%;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:2px solid #f5f6ff;outline-offset:3px}
+.tap{min-height:58px;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.menu-icon-btn{min-width:44px;min-height:44px}
+@media(max-width:540px){
+ .shell{padding:calc(env(safe-area-inset-top) + 6px) 9px calc(env(safe-area-inset-bottom) + 6px)}
+ header{gap:5px;min-height:42px}
+ .brand{font-size:clamp(17px,5vw,23px);letter-spacing:1px}
+ .subtitle{font-size:9px;letter-spacing:.5px}
+ .stats{font-size:10px;line-height:1.5;white-space:nowrap}
+ .hud{padding:5px 1px 3px;font-size:11px;gap:4px}
+ .hud #shape{max-width:44%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+ canvas{width:min(100%,min(55dvh,455px));max-height:100%;object-fit:contain}
+ .footer{padding-bottom:0;gap:5px}
+ .footer .row,.charge-label{font-size:11px}
+ .tap{padding:12px 14px;font-size:22px;min-height:62px}
+ .panel{width:min(100%,420px);padding:12px;box-shadow:3px 3px #49355b}
+ .panel h2{font-size:20px}
+ .btn{min-height:44px}
+ .home-mode{min-height:86px;padding:10px;gap:9px}
+ .home-mode-text strong{font-size:17px}
+ .home-mode-symbol{font-size:31px;min-width:34px}
+ .home-modes{gap:9px}
+ .home-divider{margin:12px 0 9px}
+ .home-tools button{min-height:62px;padding:8px 3px}
+ .home-tools button span{font-size:21px}
+ .home-core-count{margin:9px 0 6px}
+ .home-help{min-height:44px}
+ .main-menu-actions{gap:clamp(7px,2.6vw,13px);bottom:6px}
+ #overlay:has(.main-menu-actions){padding-bottom:62px}
+ #overlay:has(.main-menu-actions) #panel{max-height:100%}
+}
+@media(max-height:740px) and (max-width:540px){
+ .home-intro{margin:3px 0 9px}
+ .home-mode{min-height:74px;padding:7px 9px}
+ .home-mode-text{gap:3px}
+ .home-tools button{min-height:55px;gap:4px}
+ .home-divider{margin:8px 0 6px}
+ .home-core-count{margin:6px 0 4px}
+ .menu-icon-btn{width:45px;height:44px}
+ .panel{padding:9px}
+}
+@media(max-height:600px) and (max-width:540px){
+ .brand{font-size:17px}.subtitle{font-size:8px}
+ .hud{padding:2px 0}
+ .tap{min-height:50px;padding:7px}
+ .charge-label{font-size:10px}.meter{height:11px}
+ .footer{gap:3px}
+ .main-menu-actions{bottom:2px}
+ #overlay:has(.main-menu-actions){padding-bottom:49px}
+}
+@media(orientation:landscape) and (max-height:520px){
+ .shell{padding-top:calc(env(safe-area-inset-top) + 2px);padding-bottom:calc(env(safe-area-inset-bottom) + 2px)}
+ header{min-height:29px}.brand{font-size:16px}.subtitle{font-size:8px}
+ .hud{padding:1px 0;font-size:10px}
+ canvas{width:min(100%,48dvh);max-height:100%}
+ .footer{gap:2px}.tap{min-height:40px;padding:5px;font-size:17px}
+ .charge-label{font-size:9px}.meter{height:9px}
+ .panel{padding:8px}.home-mode{min-height:66px}.home-tools button{min-height:49px}
+}
+</style></head><body><main class="shell"><header><div><div class="brand">ONE MORE</div><div class="subtitle">RETRO SHIFT // ROGUELITE 2.19</div></div><div class="game-header-actions"><button id="settingsBtn" class="game-settings-btn" type="button" hidden aria-label="Impostazioni partita" title="Impostazioni partita">⚙</button><button id="runDeckBtn" class="run-deck-btn" type="button" hidden>▣ IL MIO DECK</button></div><div class="stats">CORE <b id="core">0</b><br>RECORD <b id="best">0</b></div></header><div class="hud"><span>COLPI <b id="hits">0</b></span><span id="shape">CERCHIO</span><span>COMBO <b id="combo">x1</b></span></div><div class="screen"><canvas id="game" width="400" height="400" aria-label="Arena di gioco"></canvas><div id="toast" class="toast"></div><div id="medalNotice" class="medal-notice" hidden aria-live="polite"></div><div id="overlay" class="overlay"><div id="panel" class="panel"></div></div></div><div class="footer" id="gameFooter"><div class="row" style="width:min(100%,400px)"><span id="score">PUNTI 0</span><span id="status">BOOST: NESSUNO</span></div><div class="charge-label"><span>⚡ CARICHE BOOST</span><span id="chargeCount">0 / 3</span></div><div class="meter" role="progressbar" aria-label="Cariche per il prossimo boost" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><div id="energy"></div></div><button id="tap" class="tap">● STOP!</button></div></main><script>
+(()=>{'use strict';const $=id=>document.getElementById(id),ctx=$('game').getContext('2d'),TAU=Math.PI*2,colors={bg:'#0e1729',path:'#425575',green:'#78eab9',yellow:'#ffe079',blue:'#77cfff'};const shapes=[
+{name:'CERCHIO',type:'circle'},
+{name:'QUADRATO',type:'poly',vertices:[[-1,-1],[1,-1],[1,1],[-1,1]]},
+{name:'RETTANGOLO',type:'poly',vertices:[[-1,-.65],[1,-.65],[1,.65],[-1,.65]]},
+{name:'TRIANGOLO',type:'poly',vertices:[[0,-1.2],[1.1,.75],[-1.1,.75]]},
+{name:'ROMBO',type:'poly',vertices:[[0,-1.2],[1.15,0],[0,1.2],[-1.15,0]]},
+{name:'FULMINE',type:'poly',vertices:[[-.35,-1.15],[.5,-1.15],[.05,-.22],[.85,-.22],[-.45,1.15],[-.06,.12],[-.8,.12]]},
+{name:'STELLA',type:'star',points:5},
+{name:'SPIRALE PIXEL',type:'poly',vertices:[[-1,-1],[1,-1],[1,1],[-.65,1],[-.65,-.55],[.55,-.55],[.55,.55],[-.12,.55],[-.12,0]]},
+{name:'CORONA',type:'poly',vertices:[[-1,.95],[-1,-.65],[-.55,-.12],[0,-1.1],[.55,-.12],[1,-.65],[1,.95]]}
+];const baseShapeIds=[1,2,3,4],abstractShapeIds=[5,6,7,8];const upgrades=[
+{id:'slow',name:'TIME WARP',desc:'Velocità -10% (max -30%).',rarity:'common',cost:0,max:3},
+{id:'wide',name:'BIG TARGET',desc:'Zona verde +15% (max +45%).',rarity:'common',cost:0,max:3},
+{id:'shield',name:'LAST CHANCE',desc:'Ottieni uno scudo.',rarity:'rare',cost:0,max:3},
+{id:'perfect',name:'PERFECT STORM',desc:'I Perfect valgono il doppio dei punti.',rarity:'rare',cost:300,max:2},
+{id:'charge',name:'FAST CHARGE',desc:'Ogni 3 Perfect di fila ottieni 2 cariche bonus, oltre alle cariche normali. Se interrompi la serie, il conteggio riparte.',rarity:'rare',cost:300,max:1},
+{id:'core',name:'CORE HUNTER +',desc:'+25% Pixel Core a fine run.',rarity:'common',cost:100,max:3},
+{id:'soft',name:'SOFT LANDING',desc:'Zona verde +10% (cumulabile entro il limite).',rarity:'common',cost:100,max:3},
+{id:'core20',name:'CORE HUNTER',desc:'+20% Pixel Core a fine run.',rarity:'common',cost:100,max:3},
+{id:'keeper',name:'COMBO KEEPER',desc:'Gli errori assorbiti non spezzano la combo.',rarity:'common',cost:100,max:1},
+{id:'steady',name:'STEADY HAND',desc:'Riduce del 15% l’aumento della velocità a ogni centro. Cumulabile fino al 45%; non rallenta la velocità iniziale.',rarity:'common',cost:100,max:3},
+{id:'sweet',name:'SWEET SPOT',desc:'La zona Perfect al centro del bersaglio verde diventa più larga del 5% per copia (max 3 copie: +15%). Non allarga la zona verde.',rarity:'common',cost:100,max:3},
+{id:'memory',name:'PRECISION MEMORY',desc:'Dopo 3 Perfect consecutivi, il prossimo colpo ha la zona verde +10% per copia (max +20%).',rarity:'common',cost:150,max:2},
+{id:'saver',name:'ENERGY SAVER',desc:'Ogni 10 centri riusciti ottieni 1 carica boost aggiuntiva.',rarity:'common',cost:150,max:1},
+{id:'investor',name:'PIXEL INVESTOR',desc:'+10% Pixel Core a fine run per copia (max +20%).',rarity:'common',cost:150,max:2},
+{id:'rhythm',name:'RHYTHM KEEPER',desc:'Dopo 5 centri consecutivi, il prossimo colpo rallenta del 5% per copia (max -10%).',rarity:'common',cost:150,max:2},
+{id:'focus',name:'PERFECT FOCUS',desc:'La zona Perfect al centro del bersaglio verde diventa più larga del 20%. Una sola copia per run. Non allarga la zona verde.',rarity:'rare',cost:300,max:1},
+{id:'battery',name:'PERFECT BATTERY',desc:'Ogni 2 Perfect totali (anche non consecutivi) ottieni 1 carica bonus, oltre alle cariche normali.',rarity:'rare',cost:300,max:1},
+{id:'double',name:'DOUBLE TROUBLE',desc:'Ogni 8 centri appare una seconda zona valida.',rarity:'rare',cost:300,max:1},
+{id:'lucky',name:'LUCKY DRAW',desc:'Maggiore probabilità di carte rare.',rarity:'rare',cost:300,max:1},
+{id:'wind',name:'SECOND WIND',desc:'Annulla una sconfitta una volta per run.',rarity:'rare',cost:300,max:1},
+{id:'recall',name:'CIRCLE RECALL',desc:'Una volta per run: impone il CERCHIO per i prossimi 5 centri.',rarity:'rare',cost:300,max:1},
+{id:'lord',name:'TIME LORD',desc:'Ogni 5 Perfect consecutivi attiva Slow-Mo.',rarity:'legendary',cost:700,max:1},
+{id:'gold',name:'GOLDEN TOUCH',desc:'I Perfect valgono x3 (non cumulabile con Perfect Storm).',rarity:'legendary',cost:800,max:1},
+{id:'master',name:'MUTATION MASTER',desc:'Riduce gli effetti negativi delle mutazioni.',rarity:'legendary',cost:1000,max:1},
+{id:'immortal',name:'IMMORTAL PIXEL',desc:'Ogni 10 centri ottieni uno scudo (max 3).',rarity:'legendary',cost:1000,max:1}];const mutations=[{id:'reverse',name:'REVERSE',desc:'La direzione si inverte dopo ogni centro.'},{id:'shift',name:'SHIFT RUSH',desc:'La forma cambia ogni 3 centri.'},{id:'narrow',name:'TIGHT ZONE',desc:'La zona verde si restringe del 12%.'}];const KEY='one_more_retro_shift_rogue_v2';let save={cores:0,unlocked:['slow','wide','shield'],bestArcade:0,bestRogue:0,bestRogueHits:0,totalRogueHits:0,legendGate:false,decks:[[],[],[],[],[]],activeDeck:0,freeTouch:false,soundEnabled:true,gamesPlayed:0,achievements:[]};try{let v=JSON.parse(localStorage.getItem(KEY)||'null');if(v&&typeof v==='object')save={...save,...v}}catch(e){};save.cores=Math.max(0,Math.floor(Number(save.cores)||0));save.unlocked=Array.isArray(save.unlocked)?save.unlocked:['slow','wide','shield'];save.bestRogueHits=Math.max(0,Math.floor(Number(save.bestRogueHits)||0));save.totalRogueHits=Math.max(0,Math.floor(Number(save.totalRogueHits)||0));save.decks=Array.isArray(save.decks)?Array.from({length:5},(_,i)=>Array.isArray(save.decks[i])?save.decks[i].slice(0,5):[]):[[],[],[],[],[]];save.activeDeck=Math.max(0,Math.min(4,Number(save.activeDeck)||0));save.freeTouch=save.freeTouch===true;save.soundEnabled=save.soundEnabled!==false;save.gamesPlayed=Math.max(0,Math.floor(Number(save.gamesPlayed)||0));save.achievements=Array.isArray(save.achievements)?save.achievements.filter(x=>typeof x==='string'):[];save.ownedCopies=(save.ownedCopies&&typeof save.ownedCopies==='object')?save.ownedCopies:{};
+// Migrazione: le carte gia' acquistate nelle versioni precedenti restano possedute.
+for(const id of save.unlocked){const card=upgrades.find(x=>x.id===id);if(card&&card.cost>0)save.ownedCopies[id]=Math.max(1,Math.min(card.max,Math.floor(Number(save.ownedCopies[id])||0)));}
+let starterJustGranted=false;
+if(!save.starterGranted){
+ const common=upgrades.filter(x=>x.rarity==='common'&&x.cost===100).map(x=>x.id);
+ for(let i=common.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[common[i],common[j]]=[common[j],common[i]];}
+ const starter=common.slice(0,5);
+ for(const id of starter){save.ownedCopies[id]=Math.max(1,save.ownedCopies[id]||0);if(!save.unlocked.includes(id))save.unlocked.push(id);}
+ // Conserva le build esistenti: riempi la prima soltanto se non ne esiste una completa.
+ if(!save.decks.some(deck=>deck.length===5))save.decks[0]=starter;
+ save.starterGranted=true;save.starterCards=starter;starterJustGranted=true;
+ try{localStorage.setItem(KEY,JSON.stringify(save))}catch(e){}
+}
+// Le build non possono equipaggiare piu' copie di quante possedute.
+save.decks=save.decks.map(deck=>{const seen={};let legendary=false;return deck.filter(id=>{const card=upgrades.find(x=>x.id===id);if(!card)return false;if(card.rarity==='legendary'){if(legendary)return false;legendary=true;}seen[id]=(seen[id]||0)+1;return seen[id]<=(save.ownedCopies[id]||0);});});
+save.legendGate=!!save.legendGate||save.bestRogueHits>=100;const legendReq={lord:500,gold:1000,master:2000,immortal:3500};let secondTarget=0,secondActive=false,perfectStreak=0,windUsed=false,shapeId=0,seenBase=new Set(),abstractReady=false,nextShapeAt=5,forcedCircleUntil=0,recallUsed=false;let memoryArmed=false,rhythmArmed=false;let deckPauseRemaining=0;let mode='rogue',state='menu',hits=0,score=0,combo=0,perfects=0,energy=0,angle=0,target=0,speed=1.9,last=0,slowUntil=0,wideNext=false,shield=0,boostIndex=0,up=Object.fromEntries(upgrades.map(x=>[x.id,0])),mut=[],cards=[],runDeck=[],pendingMutation=false,raf=0,audio;const norm=a=>(a%TAU+TAU)%TAU,diff=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));const rand=n=>Math.floor(Math.random()*n);function persist(){try{localStorage.setItem(KEY,JSON.stringify(save))}catch(e){}}// All effects are synthesized with Web Audio: no music or external files.
+function snd(freq,dur=.08,type='square',vol=.032,delay=0){
+ if(!save.soundEnabled)return;
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  audio=audio||new AC();if(audio.state==='suspended')audio.resume().catch(()=>{});
+  const t=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();
+  o.type=type;o.frequency.setValueAtTime(Math.max(50,freq),t);
+  g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(vol,t+.008);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+dur+.015);
+ }catch(e){}
+}
+function sfx(name){
+ if(!save.soundEnabled)return;
+ switch(name){
+  case 'good':snd(470,.065,'square',.023);snd(680,.075,'triangle',.018,.045);break;
+  case 'perfect':snd(660,.065,'square',.025);snd(880,.09,'square',.023,.065);snd(1320,.15,'triangle',.02,.14);break;
+  case 'boost':snd(420,.09,'sawtooth',.018);snd(630,.09,'square',.022,.08);snd(950,.18,'triangle',.025,.16);break;
+  case 'shield':snd(350,.13,'triangle',.027);snd(220,.17,'square',.016,.065);break;
+  case 'cards':snd(480,.05,'triangle',.02);snd(720,.11,'square',.017,.07);break;
+  case 'mutation':snd(330,.11,'sawtooth',.022);snd(210,.18,'square',.019,.10);break;
+  case 'shape':snd(580,.06,'square',.018);snd(920,.11,'triangle',.02,.06);break;
+  case 'medal':snd(600,.075,'square',.018);snd(800,.08,'square',.018,.09);snd(1100,.20,'triangle',.025,.19);break;
+  case 'gameover':snd(370,.15,'triangle',.025);snd(270,.18,'square',.02,.15);snd(160,.28,'triangle',.023,.32);break;
+  case 'start':snd(420,.08,'square',.022);snd(630,.09,'square',.022,.09);snd(840,.12,'triangle',.02,.18);break;
+  case 'click':snd(640,.035,'square',.014);break;
+ }
+}function toast(s){const el=$('toast');el.textContent=s;el.classList.remove('show');void el.offsetWidth;el.classList.add('show')}
+function chooseShape(){
+ if(forcedCircleUntil>hits){shapeId=0;return}
+ if(!abstractReady){const remaining=baseShapeIds.filter(id=>!seenBase.has(id));if(remaining.length){shapeId=remaining[rand(remaining.length)];seenBase.add(shapeId);if(seenBase.size===baseShapeIds.length){abstractReady=true;toast('★ FORME ASTRATTE SBLOCCATE ★')}return}}
+ const pool=[...baseShapeIds,...abstractShapeIds].filter(id=>id!==shapeId);shapeId=pool[rand(pool.length)];
+}
+function updateShape(){if(forcedCircleUntil&&hits>=forcedCircleUntil){forcedCircleUntil=0;chooseShape();nextShapeAt=hits+(mut.includes('shift')?3:5);return}
+ if(forcedCircleUntil>hits)return;
+ if(hits>=nextShapeAt){chooseShape();nextShapeAt=hits+(mut.includes('shift')?3:5)}}
+function perfectHalf(){return Math.min(half(),.05*(1+Math.min(.35,up.sweet*.05+up.focus*.20)))}function half(){return Math.max(.11,.36-Math.floor(hits/10)*.024)*(1+Math.min(.55,up.wide*.15+up.soft*.10))*(wideNext?1.7:1)*(memoryArmed?(1+up.memory*.10):1)*(mut.includes('narrow')?(up.master?.96:.88):1)}function verticesForShape(){const shape=shapes[shapeId];let coords=shape.vertices;
+ if(shape.type==='star'){coords=Array.from({length:shape.points*2},(_,i)=>{const a=-Math.PI/2+i*Math.PI/shape.points,r=i%2?.47:1.12;return[Math.cos(a)*r,Math.sin(a)*r]})}
+ return coords.map(([x,y])=>({x:200+x*115,y:200+y*115}))}
+function point(t){t=norm(t);if(shapeId===0)return{x:200+135*Math.cos(t),y:200+135*Math.sin(t)};
+ const v=verticesForShape();let lengths=[],total=0;for(let i=0;i<v.length;i++){const a=v[i],b=v[(i+1)%v.length],len=Math.hypot(b.x-a.x,b.y-a.y);lengths.push(len);total+=len}
+ let d=t/TAU*total;for(let i=0;i<v.length;i++){if(d<=lengths[i]||i===v.length-1){const a=v[i],b=v[(i+1)%v.length],f=Math.min(1,d/lengths[i]);return{x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f}}d-=lengths[i]}
+ return v[0]}
+function path(a,b,color,w){ctx.beginPath();let steps=Math.max(3,Math.ceil((b-a)*120));for(let i=0;i<=steps;i++){let p=point(a+(b-a)*i/steps);i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)}ctx.strokeStyle=color;ctx.lineWidth=w;ctx.lineJoin='miter';ctx.stroke()}// Feedback PERFECT: particelle pixel, anello luminoso e scritta temporanea.
+let perfectFx=null;
+function triggerPerfectFx(x,y){
+ const now=performance.now();
+ perfectFx={x,y,start:now,particles:Array.from({length:22},(_,i)=>{
+  const a=i*Math.PI*2/22+(Math.random()-.5)*.28;
+  const v=85+Math.random()*115;
+  return {vx:Math.cos(a)*v,vy:Math.sin(a)*v,size:3+Math.floor(Math.random()*3),
+   color:i%4===0?'#ffffff':i%3===0?'#ffe079':'#92ffd1'};
+ })};
+}
+function drawPerfectFx(){
+ if(!perfectFx)return;
+ const age=(performance.now()-perfectFx.start)/1000;
+ if(age>=.68){perfectFx=null;return}
+ const f=perfectFx,fade=Math.max(0,1-age/.68);
+ ctx.save();
+ // Flash leggero: non nasconde il percorso o la zona bersaglio.
+ if(age<.11){ctx.fillStyle='rgba(185,255,211,'+(.12*(1-age/.11))+')';ctx.fillRect(0,0,400,400)}
+ ctx.globalAlpha=fade;
+ ctx.strokeStyle='#aaffd5';ctx.lineWidth=3;
+ ctx.beginPath();ctx.arc(f.x,f.y,12+age*95,0,TAU);ctx.stroke();
+ for(const p of f.particles){
+  const x=f.x+p.vx*age,y=f.y+p.vy*age+80*age*age;
+  ctx.fillStyle=p.color;
+  ctx.fillRect(Math.round(x),Math.round(y),p.size,p.size);
+ }
+ const rise=Math.min(age/.18,1);
+ ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.font='bold 27px monospace';ctx.lineWidth=5;
+ const labelY=Math.max(36,Math.min(362,f.y-46-rise*22));
+ ctx.strokeStyle='#0e1729';ctx.strokeText('PERFECT!',200,labelY);
+ ctx.fillStyle='#b8ffcc';ctx.fillText('PERFECT!',200,labelY);
+ ctx.restore();
+}
+function draw(){ctx.fillStyle=colors.bg;ctx.fillRect(0,0,400,400);ctx.fillStyle='#1a2740';for(let x=14;x<400;x+=25)for(let y=14;y<400;y+=25)ctx.fillRect(x,y,2,2);path(0,TAU,colors.path,13);path(target-half(),target+half(),colors.green,18);path(target-perfectHalf(),target+perfectHalf(),'#f1ffc1',18);if(secondActive){path(secondTarget-half(),secondTarget+half(),'#5db5fa',17);}const p=point(angle);ctx.fillStyle=colors.yellow;ctx.fillRect(Math.round(p.x)-9,Math.round(p.y)-9,18,18);ctx.fillStyle='#fff3c2';ctx.fillRect(Math.round(p.x)-3,Math.round(p.y)-3,6,6);ctx.textAlign='center';ctx.fillStyle='#ffdf7b';ctx.font='bold 43px monospace';ctx.fillText(hits,200,204);ctx.font='12px monospace';ctx.fillStyle='#a3c1d3';ctx.fillText(shapes[shapeId].name,200,229);ctx.fillStyle=colors.blue;ctx.font='14px monospace';if(shield)ctx.fillText('◆ SHIELD '+shield,200,170);if(performance.now()<slowUntil)ctx.fillText('SLOW-MO',200,260);if(wideNext)ctx.fillText('WIDE',200,278);if(secondActive){ctx.fillStyle='#5db5fa';ctx.fillText('DOUBLE ZONE',200,295)}drawPerfectFx()}function ui(){$('hits').textContent=hits;$('score').textContent='PUNTI '+score;$('combo').textContent='x'+Math.min(5,1+Math.floor(combo/3));$('shape').textContent=shapes[shapeId].name;$('core').textContent=save.cores;$('best').textContent=mode==='rogue'?save.bestRogue:save.bestArcade;$('energy').style.width=(Math.min(3,energy)/3*100)+'%';$('chargeCount').textContent=Math.min(3,energy)+' / 3';document.querySelector('.meter').setAttribute('aria-valuenow',Math.min(3,energy));$('runDeckBtn').hidden=!(mode==='rogue'&&state==='playing');$('settingsBtn').hidden=!(state==='playing');$('status').textContent='SCUDI '+shield+' • '+(mode==='rogue'?'ROGUE':'ARCADE')}
+const cardSymbols={slow:'◷',wide:'▰',shield:'⬡',perfect:'✶',charge:'ϟ',core:'◆',soft:'◉',core20:'◇',keeper:'♧',steady:'⌁',sweet:'◎',focus:'✦',battery:'▣',double:'⊕',lucky:'✧',wind:'♥',recall:'◌',lord:'◈',gold:'★',master:'⬢',immortal:'♜',memory:'⊞',saver:'⚡',investor:'◈',rhythm:'♫'};
+function iconMarkup(id,rarity){return '<span class="pixel-icon '+(rarity||'common')+'" aria-hidden="true">'+(cardSymbols[id]||'◆')+'</span>'}
+function decorateCardButtons(){document.querySelectorAll('#panel .btn[data-card-icon]').forEach(el=>{const id=el.dataset.cardIcon,rarity=el.dataset.rarity;const label=el.textContent;el.textContent='';el.insertAdjacentHTML('beforeend',iconMarkup(id,rarity)+'<span class="btn-text"></span>');el.querySelector('.btn-text').textContent=label})}
+function renderCardTile(x,index,selected,disabled,small=false){return '<button type="button" class="pick-card '+x.rarity+(selected?' '+(small?'discard':'selected'):'')+'" data-card-index="'+index+'" '+(disabled?'disabled':'')+'>'+iconMarkup(x.id,x.rarity)+'<span class="card-name">'+x.name+'</span>'+(small?'':'<span class="card-desc">'+x.desc+'</span>')+(disabled?'<span class="card-desc">🔒</span>':'')+'</button>'}
+function show(title,html,buttons){$('panel').classList.remove('game-over-panel','home-panel');state=state==='playing'?'paused':state;$('runDeckBtn').hidden=true;$('settingsBtn').hidden=true;$('overlay').classList.remove('hidden');$('panel').innerHTML='<h2>'+title+'</h2>'+html;
+if(title==='DECK / BUILD'||title==='OFFICINA'||title==='COME SI GIOCA'||title==='★ MEDAGLIE'){
+ const back=document.createElement('button');
+ back.type='button';back.className='menu-back-arrow';
+ back.setAttribute('aria-label','Torna al menu principale');
+ back.title='Torna al menu principale';
+ back.textContent='←';
+ back.addEventListener('click',menu);
+ $('panel').prepend(back);
+}
+for(const b of buttons){const el=document.createElement('button');el.className='btn'+(b.secondary?' secondary':'')+(b.rarity?' rarity-'+b.rarity:'')+(b.header?' rarity-header':'');el.textContent=b.label;if(b.icon){el.dataset.cardIcon=b.icon;el.dataset.rarity=b.rarity||'common'}el.disabled=!!b.disabled;if(!b.header)el.addEventListener('click',b.action);$('panel').append(el)}decorateCardButtons();
+ const oldBar=$('mainMenuActions');if(oldBar)oldBar.remove();
+ if(title==='RETRO SHIFT'){
+  const bar=document.createElement('div');bar.id='mainMenuActions';bar.className='main-menu-actions';
+  bar.innerHTML='<button type="button" class="menu-icon-btn" disabled aria-label="Musica, prossimamente" title="Musica, prossimamente">♫</button>'+ 
+   '<button type="button" class="menu-icon-btn sound-menu-btn" id="menuSoundBtn" aria-label="" aria-pressed="false" title=""><svg class="speaker-pixel" viewBox="0 0 32 32" aria-hidden="true" shape-rendering="crispEdges"><path d="M3 12h7l8-7v22l-8-7H3z M21 11h3v10h-3z M26 7h3v18h-3z"/><path class="sound-cross" d="M20 10L30 23 M30 10L20 23"/></svg></button>'+ 
+   '<button type="button" class="menu-icon-btn" id="menuSettingsBtn" aria-label="Impostazioni" title="Impostazioni">⚙</button><button type="button" class="menu-icon-btn faq-icon-btn" disabled aria-label="FAQ, prossimamente" title="FAQ, prossimamente">FAQ</button>';
+  $('overlay').append(bar);
+  const soundBtn=$('menuSoundBtn');
+  const syncSoundBtn=()=>{const enabled=save.soundEnabled;soundBtn.classList.toggle('is-muted',!enabled);soundBtn.setAttribute('aria-pressed',String(!enabled));soundBtn.setAttribute('aria-label',enabled?'Disattiva effetti sonori':'Attiva effetti sonori');soundBtn.title=enabled?'Disattiva effetti sonori':'Attiva effetti sonori'};
+  syncSoundBtn();
+  soundBtn.addEventListener('click',()=>{save.soundEnabled=!save.soundEnabled;persist();syncSoundBtn();if(save.soundEnabled)sfx('click')});
+  $('menuSettingsBtn').addEventListener('click',renderMainMenuSettings);
+ }
+}function hide(){state='playing';$('overlay').classList.add('hidden');if(deckPauseRemaining>0){slowUntil=performance.now()+deckPauseRemaining;deckPauseRemaining=0}last=0;ui()}function deckBuilder(slot=save.activeDeck){checkAchievements();
+$('gameFooter').hidden=true;state='deck';save.activeDeck=slot;persist();
+const current=save.decks[slot]||[];
+const owned=upgrades.filter(x=>(save.ownedCopies[x.id]||0)>0);
+const rank={common:0,rare:1,legendary:2};
+const count=id=>current.filter(v=>v===id).length;
+const hasLegend=current.some(id=>upgrades.find(x=>x.id===id)?.rarity==='legendary');
+const escapeHtml=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tile=(x,action,extra='',disabled=false)=>'<button type="button" class="build-card '+x.rarity+(disabled?' unavailable':'')+'" data-build-action="'+action+'" '+(disabled?'disabled':'')+'>'+iconMarkup(x.id,x.rarity)+'<span class="build-info"><strong>'+escapeHtml(x.name)+'</strong><small>'+escapeHtml(x.desc)+'</small></span><span class="build-action">'+extra+'</span></button>';
+const slots=Array.from({length:5},(_,i)=>{
+ const x=upgrades.find(x=>x.id===current[i]);
+ return x?'<div class="build-slot">'+tile(x,'remove-'+i,'✕ RIMUOVI')+'</div>':'<div class="build-slot build-empty"><span>+</span><small>SLOT '+(i+1)+'<br>VUOTO</small></div>';
+}).join('');
+let html='<p class="build-instructions">Seleziona le carte qui sotto per <b>aggiungerle</b> al deck. Tocca una carta equipaggiata per <b>rimuoverla</b>.</p>'+
+'<div class="build-tabs">'+[0,1,2,3,4].map(i=>'<button type="button" class="build-tab'+(i===slot?' active':'')+'" data-slot="'+i+'">BUILD '+(i+1)+(save.decks[i]?.length===5?' ✓':'')+'</button>').join('')+'</div>'+
+'<div class="build-actions"><button type="button" class="build-random" id="randomDeck">🎲 DECK CASUALE <small>GENERA 5 CARTE</small></button><button type="button" class="build-delete" id="deleteDeck" '+(current.length?'':'disabled')+'>🗑 ELIMINA DECK <small>SVUOTA BUILD '+(slot+1)+'</small></button></div>'+'<div class="build-heading"><strong>LE TUE 5 CARTE</strong><span>'+current.length+' / 5</span></div>'+
+'<div class="build-equipped">'+slots+'</div>'+
+'<div class="build-status '+(current.length===5?'complete':'')+'">'+(current.length===5?'✓ DECK COMPLETO — PRONTO PER GIOCARE':'SCEGLI ANCORA '+(5-current.length)+' '+(5-current.length===1?'CARTA':'CARTE'))+'</div>'+
+'<div class="build-heading"><strong>CARTE DISPONIBILI</strong><span>TOCCA + PER AGGIUNGERE</span></div>';
+for(const [rarity,label] of [['common','COMUNI'],['rare','RARE'],['legendary','LEGGENDARIE']]){
+ const group=owned.filter(x=>x.rarity===rarity).sort((a,b)=>a.name.localeCompare(b.name));
+ if(!group.length)continue;
+ html+='<div class="build-category '+rarity+'">'+label+'</div><div class="build-library">';
+ for(const x of group){
+  const n=count(x.id),blocked=current.length>=5||n>=Math.min(x.max,save.ownedCopies[x.id]||0)||(rarity==='legendary'&&hasLegend);
+  html+='<button type="button" class="build-card build-library-card '+x.rarity+(blocked?' unavailable':'')+'" data-build-action="add-'+x.id+'" '+(blocked?'disabled':'')+'>'+iconMarkup(x.id,x.rarity)+'<span class="library-card-body"><span class="library-card-top"><strong>'+escapeHtml(x.name)+'</strong><span class="library-card-desc">'+escapeHtml(x.desc)+'</span></span><span class="library-card-bottom"><span>POSSEDUTE <b>'+(save.ownedCopies[x.id]||0)+'/'+x.max+'</b> · NEL DECK <b>'+n+'</b></span><span class="library-card-add">'+(blocked?'NON DISPONIBILE':'+ AGGIUNGI')+'</span></span></span></button>';
+ }
+ html+='</div>';
+}
+show('DECK / BUILD',html,[{label:'▶ USA BUILD '+(slot+1),disabled:current.length!==5,action:()=>{save.activeDeck=slot;persist();menu()}},{label:'← MENU',secondary:true,action:menu}]);
+document.querySelectorAll('#panel [data-slot]').forEach(el=>el.onclick=()=>deckBuilder(Number(el.dataset.slot)));
+const randomButton=document.getElementById('randomDeck');if(randomButton)randomButton.onclick=()=>randomDeckConfirm(slot);
+const deleteButton=document.getElementById('deleteDeck');if(deleteButton)deleteButton.onclick=()=>deleteDeckConfirm(slot);
+document.querySelectorAll('#panel [data-build-action]').forEach(el=>el.onclick=()=>{
+ const op=el.dataset.buildAction;
+ if(op.startsWith('remove-')){save.decks[slot].splice(Number(op.slice(7)),1)}
+ else if(op.startsWith('add-')){
+  const id=op.slice(4),x=upgrades.find(x=>x.id===id);
+  if(!x||current.length>=5||count(id)>=Math.min(x.max,save.ownedCopies[id]||0)||(x.rarity==='legendary'&&hasLegend))return;
+  save.decks[slot].push(id);
+ }
+ persist();deckBuilder(slot);
+});
+
+}
+function deleteDeckConfirm(slot){
+ const current=save.decks[slot]||[];
+ if(!current.length)return;
+ show('ELIMINARE LA BUILD '+(slot+1)+'?',
+ '<p>Vuoi davvero <b>svuotare la BUILD '+(slot+1)+'</b>?</p><p>Le '+current.length+' carte equipaggiate torneranno disponibili nella collezione. <b>Non perderai carte acquistate, Pixel Core o altre build.</b></p>',
+ [{label:'🗑 SÌ, SVUOTA BUILD '+(slot+1),action:()=>{save.decks[slot]=[];persist();deckBuilder(slot);toast('BUILD '+(slot+1)+' SVUOTATA')}},
+ {label:'← ANNULLA',secondary:true,action:()=>deckBuilder(slot)}]);
+}
+function randomDeckConfirm(slot){
+const apply=()=>{
+ const available=upgrades.filter(x=>(save.ownedCopies[x.id]||0)>0);
+ const generated=[];let legend=false;
+ while(generated.length<5){
+  const eligible=available.filter(x=>generated.filter(id=>id===x.id).length<Math.min(x.max,save.ownedCopies[x.id]||0)&&(x.rarity!=='legendary'||!legend));
+  if(!eligible.length)break;
+  const weighted=eligible.map(x=>({x,w:x.rarity==='legendary'?1:x.rarity==='rare'?3:8}));
+  let roll=Math.random()*weighted.reduce((n,v)=>n+v.w,0),picked=weighted[weighted.length-1].x;
+  for(const entry of weighted){roll-=entry.w;if(roll<0){picked=entry.x;break}}
+  generated.push(picked.id);if(picked.rarity==='legendary')legend=true;
+ }
+ if(generated.length<5){show('DECK INCOMPLETO','<p>Non hai ancora abbastanza carte disponibili per completare una build di 5 carte. Acquistane altre nell’Officina.</p>',[{label:'← TORNA ALLA BUILD',action:()=>deckBuilder(slot)}]);return}
+ save.decks[slot]=generated;save.activeDeck=slot;persist();deckBuilder(slot);toast('🎲 BUILD '+(slot+1)+' GENERATA!');
+};
+if((save.decks[slot]||[]).length){show('SOSTITUIRE LA BUILD?','<p>La generazione casuale <b>sostituirà le carte della BUILD '+(slot+1)+'</b>. Le altre quattro build non cambieranno.</p>',[{label:'🎲 SÌ, GENERA DECK',action:apply},{label:'← ANNULLA',secondary:true,action:()=>deckBuilder(slot)}]);}
+else apply();
+}
+const achievementList=[
+ {id:'first',name:'PRIMO CENTRO',desc:'Realizza il primo HIT',tier:'bronze',goal:1,progress:()=>Math.max(save.bestRogueHits,save.bestArcadeHits||0,hits)},
+ {id:'steady',name:'MANO FERMA',desc:'5 PERFECT in una run',tier:'silver',goal:5,progress:()=>Math.max(save.bestPerfects||0,perfects)},
+ {id:'falcon',name:'OCCHIO DI FALCO',desc:'10 PERFECT in una run',tier:'gold',goal:10,progress:()=>Math.max(save.bestPerfects||0,perfects)},
+ {id:'precision',name:'PRECISIONE ASSOLUTA',desc:'20 PERFECT in una run',tier:'platinum',goal:20,progress:()=>Math.max(save.bestPerfects||0,perfects)},
+ {id:'warmup',name:'RISCALDAMENTO',desc:'10 HIT in una run',tier:'bronze',goal:10,progress:()=>Math.max(save.bestRogueHits,save.bestArcadeHits||0,hits)},
+ {id:'unstoppable',name:'INARRESTABILE',desc:'25 HIT in una run',tier:'silver',goal:25,progress:()=>Math.max(save.bestRogueHits,save.bestArcadeHits||0,hits)},
+ {id:'machine',name:'MACCHINA ARCADE',desc:'50 HIT in una run',tier:'gold',goal:50,progress:()=>Math.max(save.bestRogueHits,save.bestArcadeHits||0,hits)},
+ {id:'legend',name:'LEGGENDA DEL RITMO',desc:'100 HIT in una run',tier:'platinum',goal:100,progress:()=>Math.max(save.bestRogueHits,save.bestArcadeHits||0,hits)},
+ {id:'persistent',name:'NON MI ARRENDO',desc:'Completa 10 partite',tier:'bronze',goal:10,progress:()=>save.gamesPlayed},
+ {id:'again',name:'ANCORA UNA!',desc:'Completa 50 partite',tier:'silver',goal:50,progress:()=>save.gamesPlayed},
+ {id:'collector',name:'COLLEZIONISTA',desc:'Possiedi 15 carte',tier:'gold',goal:15,progress:()=>Object.values(save.ownedCopies).reduce((n,v)=>n+Math.max(0,Number(v)||0),0)},
+ {id:'deckmaster',name:'DECK MASTER',desc:'Completa tutte e 5 le build',tier:'platinum',goal:5,progress:()=>save.decks.filter(d=>Array.isArray(d)&&d.length===5).length}
+];
+// Distinctive inline pixel-art vector medals: no external assets required.
+const medalArt={
+ first:'<path d="M22 30h20v7H22z M28 23h8v21h-8z" fill="#fff2c2"/>',
+ steady:'<path d="M14 36h36v5H14z M29 20h6v35h-6z M20 27h24v5H20z" fill="#fff2c2"/>',
+ falcon:'<path d="M9 28l15-9 8 9 8-9 15 9-14 6-9 15-9-15z" fill="#fff2c2"/><path d="M26 30h12l-6 8z" fill="#16283b"/>',
+ precision:'<path d="M29 15h6v9h-6z M29 42h6v9h-6z M13 30h12v5H13z M39 30h12v5H39z" fill="#fff2c2"/><path d="M26 27h12v12H26z" fill="#fff2c2"/><path d="M30 31h4v4h-4z" fill="#173149"/>',
+ warmup:'<path d="M19 42h26v7H19z M24 35h16v7H24z M29 17h6v18h-6z M24 22h16v6H24z" fill="#fff2c2"/>',
+ unstoppable:'<path d="M17 17h30v9H17z M23 26h18v20H23z M28 46h8v7h-8z" fill="#fff2c2"/><path d="M27 29h10v8H27z" fill="#173149"/>',
+ machine:'<path d="M19 16h26v7H19z M14 23h36v27H14z" fill="#fff2c2"/><path d="M21 29h22v10H21z" fill="#173149"/><path d="M23 43h6v5h-6z M35 43h6v5h-6z" fill="#173149"/>',
+ legend:'<path d="M14 20h8v-6h7v13h6V14h7v6h8v27H14z" fill="#fff2c2"/><path d="M22 36h20v5H22z" fill="#173149"/>',
+ persistent:'<path d="M17 18h30v7H17z M17 41h30v7H17z M23 25h18v16H23z" fill="#fff2c2"/><path d="M27 29h10v8H27z" fill="#173149"/>',
+ again:'<path d="M20 18h25v7H20z M14 25h9v17h-9z M20 42h25v7H20z M40 33h10v9H40z" fill="#fff2c2"/><path d="M28 28h9v10h-9z" fill="#173149"/>',
+ collector:'<path d="M17 18h30v31H17z" fill="#fff2c2"/><path d="M22 23h20v8H22z M22 36h8v8h-8z M34 36h8v8h-8z" fill="#173149"/>',
+ deckmaster:'<path d="M12 22h26v31H12z M19 15h27v31H19z M26 8h27v31H26z" fill="#fff2c2"/><path d="M31 14h17v5H31z M31 24h17v5H31z" fill="#173149"/>'
+};
+function medalIcon(a){
+ const tierColors={bronze:['#cd9066','#7c4634'],silver:['#cbd6e0','#71899d'],gold:['#ffe079','#ad7835'],platinum:['#a9f6e2','#458eaa']};
+ const c=tierColors[a.tier]||tierColors.bronze;
+ return '<svg class="medal-svg" viewBox="0 0 64 68" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" shape-rendering="crispEdges">'+
+ '<path d="M18 2h11l7 15-9 9z M35 2h11L37 26l-9-9z" fill="#486c93"/>'+
+ '<path d="M20 17h24v5h7v6h6v22h-6v6h-7v6H20v-6h-7v-6H7V28h6v-6h7z" fill="'+c[1]+'"/>'+
+ '<path d="M22 21h20v5h7v6h4v15h-4v6h-7v5H22v-5h-7v-6h-4V32h4v-6h7z" fill="'+c[0]+'"/>'+
+ '<path d="M23 26h18v4h7v17h-7v6H23v-6h-7V30h7z" fill="#1c3046"/>'+
+ '<g transform="translate(0 2) scale(1 .88)">'+(medalArt[a.id]||medalArt.first)+'</g>'+
+ '<path d="M19 29h4v-4h7v3h-6v4h-5z" fill="#ffffff" opacity=".35"/>'+
+ '</svg>';
+}
+let medalNoticeTimer=0,medalQueue=[];
+function showMedalNotice(){
+ const el=$('medalNotice');if(!el||!medalQueue.length){if(el)el.hidden=true;return}
+ const a=medalQueue.shift();el.innerHTML='<span class="medal-notice-icon '+a.tier+'">'+medalIcon(a)+'</span><span><b>MEDAGLIA SBLOCCATA!</b><small>'+a.name+'</small></span>';
+ el.hidden=false;sfx('medal');clearTimeout(medalNoticeTimer);
+ medalNoticeTimer=setTimeout(()=>{el.hidden=true;showMedalNotice()},2300);
+}
+function checkAchievements(){
+ let changed=false;
+ for(const a of achievementList){
+  if(!save.achievements.includes(a.id)&&a.progress()>=a.goal){save.achievements.push(a.id);medalQueue.push(a);changed=true}
+ }
+ if(changed){persist();if($('medalNotice').hidden)showMedalNotice()}
+}
+function viewMedals(){
+ $('gameFooter').hidden=true;state='medals';checkAchievements();
+ const count=achievementList.filter(a=>save.achievements.includes(a.id)).length;
+ const tiles=achievementList.map(a=>{
+  const unlocked=save.achievements.includes(a.id),value=Math.min(a.goal,a.progress());
+  return '<div class="medal-tile '+a.tier+(unlocked?' earned':' locked')+'"><div class="medal-pixel">'+medalIcon(a)+'</div><strong>'+a.name+'</strong><small>'+a.desc+'</small><span>'+(unlocked?'✓ SBLOCCATA':value+' / '+a.goal)+'</span></div>';
+ }).join('');
+ show('★ MEDAGLIE','<div class="medal-count">'+count+' / 12 SBLOCCATE</div><div class="medal-progress"><div style="width:'+(count/12*100)+'%"></div></div><div class="medal-grid">'+tiles+'</div><p class="medal-footnote">Le medaglie sono permanenti e non modificano la difficoltà. Gli obiettivi di precisione e HIT valgono in entrambe le modalità.</p>',[{label:'← TORNA AL MENU',secondary:true,action:menu}]);
+}
+function menu(){
+ $('medalNotice').hidden=true;medalQueue=[];clearTimeout(medalNoticeTimer);
+ state='menu';$('gameFooter').hidden=true;ui();
+ const html=`<div class="home-intro">FERMATI AL MOMENTO GIUSTO</div>
+ <div class="home-modes">
+  <button type="button" class="home-mode home-rogue" id="homeRogue"><span class="home-mode-symbol">▣</span><span class="home-mode-text"><strong>ROGUELITE</strong><small>Carte, potenziamenti e Pixel Core</small><em>RECORD ${save.bestRogue.toLocaleString('it-IT')}</em></span><span class="home-chevron">›</span></button>
+  <button type="button" class="home-mode home-arcade" id="homeArcade"><span class="home-mode-symbol">◎</span><span class="home-mode-text"><strong>ARCADE PURO</strong><small>Solo abilità. Batti il record.</small><em>RECORD ${save.bestArcade.toLocaleString('it-IT')}</em></span><span class="home-chevron">›</span></button>
+ </div>
+ <div class="home-divider"><span>PERSONALIZZA E PROGREDISCI</span></div>
+ <div class="home-tools">
+  <button type="button" id="homeDeck"><span>▣</span>DECK</button>
+  <button type="button" id="homeShop"><span>◆</span>OFFICINA</button>
+  <button type="button" id="homeMedals"><span>★</span>MEDAGLIE</button>
+ </div>
+ <div class="home-core-count">◆ ${save.cores} PIXEL CORE</div>
+ <button type="button" class="home-help" id="homeHelp">? COME SI GIOCA</button>`;
+ show('RETRO SHIFT',html,[]);
+ $('panel').classList.add('home-panel');
+ $('homeRogue').addEventListener('click',()=>start('rogue'));
+ $('homeArcade').addEventListener('click',()=>start('arcade'));
+ $('homeDeck').addEventListener('click',()=>deckBuilder());
+ $('homeShop').addEventListener('click',shop);
+ $('homeMedals').addEventListener('click',viewMedals);
+ $('homeHelp').addEventListener('click',help);
+}
+function help(){$('gameFooter').hidden=true;state='help';const html=`
+<p style="text-align:left"><b>♪ EFFETTI SONORI</b><br>Effetti retro a 8-bit per colpi, PERFECT, boost, scudi, carte, mutazioni, medaglie e Game Over. Si possono disattivare in <b>⚙ IMPOSTAZIONI</b>, dal menu o durante una partita. L'opzione viene salvata nel browser. La musica non è ancora disponibile.</p>
+<p style="text-align:left"><b>★ MEDAGLIE</b><br>12 obiettivi permanenti in quattro rarità: Bronzo, Argento, Oro e Platino. Consulta i progressi dal menu principale. Le medaglie non assegnano Pixel Core e non influenzano le carte.</p>
+<p style="text-align:left"><b>⚙ IMPOSTAZIONI DURANTE LA RUN</b><br>In <b>Arcade</b> e <b>Roguelite</b>, premi l'icona <b>⚙</b> in alto per mettere in pausa. Scegli <b>RIPRENDI PARTITA</b> oppure <b>TORNA AL MENU</b>. Prima di uscire viene chiesta conferma <b>SÌ / NO</b>. Uscendo perdi i progressi della run; in Roguelite perdi anche i <b>Pixel Core non ancora riscossi</b>. I Core già salvati e i record precedenti restano intatti.</p>
+<p style="text-align:left"><b>⚙ IMPOSTAZIONI DAL MENU</b><br>Puoi modificare <b>TOCCO LIBERO</b> anche dal menu principale tramite l’icona ⚙ in basso. Nel menu impostazioni trovi solo questa opzione e il comando per tornare indietro.</p>
+<p style="text-align:left"><b>👆 TOCCO LIBERO (OPZIONALE)</b><br>Di default il cursore si ferma soltanto premendo <b>STOP</b> (o la barra spaziatrice). Apri <b>⚙ IMPOSTAZIONI</b> durante una partita per attivare <b>TOCCO LIBERO</b>: potrai fermarti toccando anche lo sfondo e l'arena. I pulsanti <b>IL MIO DECK</b> e <b>IMPOSTAZIONI</b>, come gli altri controlli e i menu, non attivano lo STOP. L'opzione è comune a entrambe le modalità e viene salvata nel browser.</p>
+<p style="text-align:left"><b>🎯 OBIETTIVO E COMANDI</b><br>Il cursore giallo corre sul bordo della forma. Premi <b>STOP</b> (comando predefinito) oppure <b>SPAZIO</b> quando raggiunge la <b>zona verde</b>. Se sbagli perdi, salvo protezioni attive. La zona verde cambia posizione dopo ogni centro.</p>
+<p style="text-align:left"><b>✨ PERFECT, COMBO E BOOST</b><br>La fascia luminosa al centro della zona verde è la <b>zona Perfect</b>: colpirla dà più punti e <b>1 carica boost</b>. A <b>3 cariche</b> parte automaticamente un potenziamento: <b>Slow-Mo</b> rallenta il cursore, <b>Wide</b> allarga la zona del prossimo colpo e <b>Shield</b> protegge da un errore. Le cariche extra rimangono disponibili. Le combo aumentano il moltiplicatore fino a ×5.</p>
+<p style="text-align:left"><b>🔺 FORME E DIFFICOLTÀ</b><br>Ogni partita comincia con un <b>cerchio</b>. Ogni <b>5 centri</b> la forma cambia: prima quadrato, rettangolo, triangolo e rombo in ordine casuale senza ripetizioni, poi anche forme astratte. Il cursore accelera e la zona valida può restringersi.</p>
+<p style="text-align:left"><b>🎁 PRIMO AVVIO — STARTER DECK</b><br>Alla prima apertura ricevi <b>5 carte comuni casuali, tutte diverse</b>, gratis e in modo permanente. La <b>BUILD 1</b> viene riempita automaticamente: puoi iniziare subito a giocare. L'estrazione avviene <b>una sola volta</b>. Le altre build rimangono vuote. Per equipaggiare piu copie della stessa carta devi <b>acquistare le copie aggiuntive nell'Officina</b>.</p>
+<p style="text-align:left"><b>▣ DECK / BUILD — PRIMA DELLA PARTITA</b><br>Nel menu principale apri <b>DECK / BUILD</b>. In alto trovi <b>5 pulsanti BUILD</b>: sono cinque configurazioni indipendenti che puoi salvare. Selezionane una. Con <b>🎲 DECK CASUALE</b> puoi generare automaticamente cinque carte tra quelle sbloccate, rispettando i limiti delle copie e della leggendaria; se la build contiene già carte, il gioco chiede conferma prima di sostituirle. Puoi poi modificarla manualmente. Con <b>🗑 ELIMINA DECK</b>, accanto al pulsante casuale, puoi svuotare soltanto la build selezionata dopo una conferma: <b>le carte rimangono nella collezione</b> e Pixel Core e altre build non cambiano. Nella sezione <b>LE TUE 5 CARTE</b> vedi le carte equipaggiate; sotto, in <b>CARTE DISPONIBILI</b>, trovi quelle ottenute gratuitamente o acquistate nell'Officina, divise in <b>comuni</b> (bianche), <b>rare</b> (blu) e <b>leggendarie</b> (oro). Tocca <b>+ AGGIUNGI</b> per equipaggiare una carta, oppure <b>✕ RIMUOVI</b> per liberare uno slot. Leggi icona e descrizione per capire l'effetto. Completa <b>5/5 slot</b> rispettando le <b>copie possedute</b>, poi premi <b>USA BUILD</b>. Le cinque carte sono <b>attive dall'inizio</b> della run Roguelite.</p>
+<p style="text-align:left"><b>⏸ CONTROLLA IL DECK DURANTE LA RUN</b><br>In Roguelite, mentre giochi, premi <b>▣ IL MIO DECK</b> in alto: il gioco va in pausa e puoi consultare tutte le 5 carte attualmente attive, con icona, rarità, descrizione e copie. Premi <b>RIPRENDI PARTITA</b> per continuare esattamente dal punto in cui eri rimasto. Il deck mostrato include gli scambi già effettuati.</p><p style="text-align:left"><b>🔄 SCAMBIO CARTE OGNI 5 CENTRI</b><br>Durante il Roguelite, ogni <b>5 centri riusciti</b> si apre una schermata con <b>3 nuove carte proposte in alto</b> e <b>le tue 5 carte in basso</b>. Seleziona una proposta, poi la carta equipaggiata da scartare: puoi leggere le descrizioni e <b>confrontare ciò che perdi e ciò che ottieni</b> prima di confermare. Puoi anche <b>saltare lo scambio</b>. Il deck resta sempre di cinque carte. Quando scarti una carta, il suo effetto termina, ma le cariche boost già ottenute restano.</p>
+<p style="text-align:left"><b>★ RARITÀ E LEGGENDARIE</b><br>Le <b>comuni</b> vengono proposte più spesso, le <b>rare</b> meno e le <b>leggendarie</b> molto raramente. Le carte possono ripresentarsi; alcune permettono più copie, fino al proprio limite. Puoi avere <b>massimo una leggendaria</b> nel deck: una leggendaria equipaggiata può essere sostituita <b>solo da un'altra leggendaria</b>, mai da una comune o rara. Anche le leggendarie proposte possono sostituire soltanto lo slot leggendario.</p>
+<p style="text-align:left"><b>⚡ SINERGIE DI ESEMPIO</b><br><b>Sweet Spot</b> (comune) aumenta la fascia Perfect del 5% per copia, fino a tre copie; <b>Perfect Focus</b> (rara) aggiunge il 20%, per un massimo combinato di +35%. Non allargano la zona verde. <b>Fast Charge</b> dà 2 cariche extra ogni 3 Perfect consecutivi; <b>Perfect Battery</b> dà 1 carica extra ogni 2 Perfect totali. Combinale per ottenere boost più spesso. <b>Circle Recall</b> forza il cerchio per i 5 centri successivi, una sola volta per run.</p>
+<p style="text-align:left"><b>🌀 MUTAZIONI</b><br>Ogni <b>10 centri</b> nel Roguelite arriva una mutazione: può invertire il movimento, accelerare il cambio di forma o rendere più stretta la zona valida.</p>
+<p style="text-align:left"><b>◆ OFFICINA E PIXEL CORE</b><br>Il Roguelite assegna Pixel Core alla fine della partita: <b>5 ogni 5 centri</b>, <b>3 ogni 10 Perfect</b>, più <b>10 Core ogni 25 centri</b> e <b>25 Core ogni 50 centri</b>. I premi per 25 e 50 centri sono cumulativi e si ripetono nelle run lunghe; i bonus delle carte si applicano sul totale. Nell'Officina acquisti le carte da usare nelle build: <b>comuni standard 100 Core per copia</b>, <b>4 comuni premium 150 Core per copia</b>, <b>rare 300 Core per copia</b>. Ogni carta indica <b>copie possedute / massimo</b>; acquistare una seconda copia non regala la terza. Le leggendarie richiedono prima <b>100 centri in una sola run Roguelite</b>; si rivelano a <b>500, 1.000, 2.000 e 3.500</b> centri cumulativi e costano <b>700, 800, 900 e 1.000 Core</b>.</p>
+<p style="text-align:left"><b>✦ 4 NUOVE COMUNI PREMIUM (150 CORE)</b><br><b>Precision Memory:</b> dopo 3 Perfect consecutivi, zona verde del colpo seguente +10% per copia (max 2). <b>Energy Saver:</b> 1 carica boost bonus ogni 10 centri. <b>Pixel Investor:</b> +10% Core finali per copia (max 2). <b>Rhythm Keeper:</b> dopo 5 centri riusciti, velocità del colpo seguente -5% per copia (max 2). Sono comuni a tutti gli effetti, ma non fanno parte delle cinque carte iniziali gratuite: acquistale nell'Officina per usarle nelle build e trovarle negli scambi.</p>
+<p style="text-align:left"><b>🕹 ARCADE PURO</b><br>Gioca senza deck, carte, mutazioni Roguelite o Pixel Core. Restano il tempismo, i Perfect, le combo e i <b>boost automatici</b>. Arcade e Roguelite hanno <b>record separati</b>.</p>
+<p style="text-align:left"><b>💾 SALVATAGGI</b><br>Build, copie delle carte acquistate, Starter Deck, Pixel Core e record vengono salvati sul dispositivo tramite il browser, quando disponibile. Cambiare browser o cancellarne i dati può azzerare i progressi.</p>`;
+show('COME SI GIOCA',html,[{label:'← TORNA AL MENU',secondary:true,action:menu}]);}
+function shop(){checkAchievements();$('gameFooter').hidden=true;state='shop';let html='<p>◆ PIXEL CORE: <b>'+save.cores+'</b> · CENTRI CUMULATIVI: <b>'+save.totalRogueHits+'</b></p>';
+html+='<p><b>CARTE PERMANENTI</b><br>Ogni acquisto aggiunge <b>una copia</b> alla collezione. Le carte gia possedute possono essere acquistate ancora fino al loro limite. Le copie valgono per tutte le build, ma ogni singola build puo usarne soltanto quante ne possiedi.</p>';
+html+='<p><b>OFFICINA LEGGENDARIA</b><br>'+(save.legendGate?'★ PROVA DEI 100 SUPERATA! Le leggendarie si rivelano con i centri cumulativi.':'🔒 Raggiungi 100 centri riusciti in UNA run Roguelite per aprire l’Officina Leggendaria. Record attuale: '+save.bestRogueHits+'/100')+'</p>';
+const rank={common:0,rare:1,legendary:2};const items=upgrades.filter(x=>x.cost>0).sort((a,b)=>rank[a.rarity]-rank[b.rarity]||a.cost-b.cost);
+const buttons=items.map(x=>{
+ const qty=save.ownedCopies[x.id]||0;
+ if(x.rarity==='legendary'&&(!save.legendGate||save.totalRogueHits<legendReq[x.id])){
+  const idx=['lord','gold','master','immortal'].indexOf(x.id);
+  return{label:'🔒 LEGGENDARIA '+['I','II','III','IV'][idx]+' — ??? | '+(save.legendGate?'CENTRI '+Math.min(save.totalRogueHits,legendReq[x.id])+'/'+legendReq[x.id]:'PROVA DEI 100: '+Math.min(save.bestRogueHits,100)+'/100'),disabled:true,rarity:'legendary',action:()=>{}};
+ }
+ return{label:(x.rarity==='legendary'?'★ ':x.rarity==='rare'?'◆ ':'• ')+x.name+'  ['+qty+'/'+x.max+' COPIE]  — '+(qty>=x.max?'COMPLETA':x.cost+' CORE')+' | '+x.desc,
+ disabled:qty>=x.max||save.cores<x.cost,rarity:x.rarity,icon:x.id,
+ action:()=>{if(save.cores<x.cost||(save.ownedCopies[x.id]||0)>=x.max)return;
+ if(x.rarity==='legendary'&&(!save.legendGate||save.totalRogueHits<legendReq[x.id]))return;
+ save.cores-=x.cost;save.ownedCopies[x.id]=(save.ownedCopies[x.id]||0)+1;
+ if(!save.unlocked.includes(x.id))save.unlocked.push(x.id);
+ persist();ui();shop();}};
+});
+const grouped=[];for(const [rarity,title] of [['common','COMUNI'],['rare','RARE'],['legendary','LEGGENDARIE']]){const group=buttons.filter(b=>b.rarity===rarity);if(group.length){grouped.push({label:title,rarity,header:true,disabled:true});grouped.push(...group)}}
+show('OFFICINA',html,grouped.concat([{label:'← INDIETRO',secondary:true,action:menu}]));}
+function nextTarget(){let a;do{a=Math.random()*TAU}while(Math.abs(diff(a,angle))<.65);target=a;secondActive=mode==='rogue'&&up.double>0&&hits>0&&hits%8===0;if(secondActive){do{secondTarget=Math.random()*TAU}while(Math.abs(diff(secondTarget,target))<half()*2.8)}}let maxRunCombo=1;
+function start(m){$('medalNotice').hidden=true;medalQueue=[];clearTimeout(medalNoticeTimer);perfectFx=null;$('gameFooter').hidden=false;deckPauseRemaining=0;mode=m;hits=score=combo=perfects=energy=perfectStreak=0;maxRunCombo=1;windUsed=false;secondActive=false;angle=0;speed=1.9;slowUntil=0;wideNext=false;shield=0;boostIndex=0;up=Object.fromEntries(upgrades.map(x=>[x.id,0]));if(m==='rogue'){runDeck=[...(save.decks[save.activeDeck]||[])];for(const id of runDeck)if(up[id]!==undefined)up[id]++;if(runDeck.length!==5){state='menu';deckBuilder();return}}mut=[];pendingMutation=false;shapeId=0;seenBase=new Set();abstractReady=false;nextShapeAt=5;forcedCircleUntil=0;recallUsed=false;memoryArmed=false;rhythmArmed=false;nextTarget();hide();sfx('start')}function viewGameSettings(){
+ if(state==='menu'){renderMainMenuSettings();return}
+ if(state!=='playing')return;
+ deckPauseRemaining=Math.max(0,slowUntil-performance.now());slowUntil=0;
+ renderGameSettings();
+}
+function renderMainMenuSettings(){
+ state='main-settings';$('gameFooter').hidden=true;
+ const touchLabel=save.freeTouch?'ATTIVO ✓':'DISATTIVATO';
+ const soundLabel=save.soundEnabled?'ATTIVI ✓':'DISATTIVATI';
+ const html='<div class="touch-setting"><strong>👆 TOCCO LIBERO</strong>'+
+ '<p>Se attivo, durante la partita puoi fermare il cursore toccando qualsiasi punto dello schermo di gioco, esclusi pulsanti e menu.</p>'+
+ '<button type="button" id="touchModeToggle" class="btn secondary" aria-pressed="'+save.freeTouch+'">TOCCO LIBERO: '+touchLabel+'</button>'+
+ '<small>Disattivato per impostazione predefinita. Il pulsante STOP funziona sempre, in entrambe le modalità.</small></div>'+
+ '<div class="touch-setting"><strong>♪ EFFETTI SONORI</strong><p>Suoni arcade per PERFECT, colpi, boost, medaglie e Game Over. Nessuna musica di sottofondo.</p>'+
+ '<button type="button" id="soundToggle" class="btn secondary" aria-pressed="'+save.soundEnabled+'">EFFETTI SONORI: '+soundLabel+'</button></div>';
+ show('⚙ IMPOSTAZIONI',html,[{label:'← TORNA AL MENU',secondary:true,action:menu}]);
+ $('touchModeToggle').addEventListener('click',()=>{save.freeTouch=!save.freeTouch;persist();renderMainMenuSettings()});
+ $('soundToggle').addEventListener('click',()=>{save.soundEnabled=!save.soundEnabled;persist();if(save.soundEnabled)sfx('click');renderMainMenuSettings()});
+ 
+}
+function renderGameSettings(){
+ const touchLabel=save.freeTouch?'ATTIVO ✓':'DISATTIVATO';
+ const soundLabel=save.soundEnabled?'ATTIVI ✓':'DISATTIVATI';
+ const html='<p>PARTITA IN <b>PAUSA</b></p>'+
+ '<div class="touch-setting"><strong>👆 TOCCO LIBERO</strong><p>Quando è attivo, puoi fermare il cursore toccando qualsiasi punto dello schermo di gioco, tranne i pulsanti e i menu.</p>'+
+ '<button type="button" id="touchModeToggle" class="btn secondary" aria-pressed="'+save.freeTouch+'">TOCCO LIBERO: '+touchLabel+'</button>'+
+ '<small>Il pulsante STOP funziona sempre. Questa preferenza vale per Arcade e Roguelite.</small></div>'+
+ '<div class="touch-setting"><strong>♪ EFFETTI SONORI</strong><p>Attiva o disattiva tutti i suoni del gioco. La musica verrà aggiunta in futuro.</p>'+
+ '<button type="button" id="soundToggle" class="btn secondary" aria-pressed="'+save.soundEnabled+'">EFFETTI SONORI: '+soundLabel+'</button></div>';
+ show('⚙ IMPOSTAZIONI',html,[
+ {label:'▶ RIPRENDI PARTITA',action:hide},
+ {label:'⌂ TORNA AL MENU',secondary:true,action:confirmExitGame}
+ ]);
+ $('touchModeToggle').addEventListener('click',()=>{save.freeTouch=!save.freeTouch;persist();renderGameSettings()});
+ $('soundToggle').addEventListener('click',()=>{save.soundEnabled=!save.soundEnabled;persist();if(save.soundEnabled)sfx('click');renderGameSettings()});
+ 
+}
+function confirmExitGame(){
+ const warning=mode==='rogue'
+ ?'<p style="color:#ffb6b6"><b>Perderai tutti i progressi della run e i Pixel Core che avresti guadagnato in questa partita.</b></p>'
+ :'<p style="color:#ffb6b6"><b>Perderai tutti i progressi e i punti della partita in corso.</b></p>';
+ show('⚠ USCIRE DALLA PARTITA?','<p>Sei sicuro di voler tornare al menu?</p>'+warning+'<p style="font-size:11px">I record e i Pixel Core già salvati non saranno cancellati.</p>',[
+ {label:'NO · CONTINUA A GIOCARE',action:hide},
+ {label:'SÌ · ESCI AL MENU',secondary:true,action:()=>{deckPauseRemaining=0;slowUntil=0;menu()}}
+ ]);
+ 
+}
+$('settingsBtn').addEventListener('click',viewGameSettings);
+function viewRunDeck(){
+if(state!=='playing'||mode!=='rogue')return;
+deckPauseRemaining=Math.max(0,slowUntil-performance.now());slowUntil=0;
+const counts={};for(const id of runDeck)counts[id]=(counts[id]||0)+1;
+const content='<p style="text-align:left">Partita in <b>PAUSA</b>. Queste sono le 5 carte <b>attive adesso</b>, incluse quelle ottenute con gli scambi durante la run.</p><div class="run-deck-overview">'+runDeck.map((id,i)=>{const c=upgrades.find(x=>x.id===id);if(!c)return '';return '<div class="run-deck-item '+c.rarity+'">'+iconMarkup(c.id,c.rarity)+'<div class="run-deck-detail"><strong>'+(i+1)+'. '+c.name+'</strong><small>'+c.desc+'</small><em>'+c.rarity.toUpperCase()+(counts[id]>1?' · '+counts[id]+' COPIE ATTIVE':'')+'</em></div></div>'}).join('')+'</div><p style="text-align:left;font-size:11px">⚡ Cariche boost: <b>'+energy+'</b> · Scudi: <b>'+shield+'</b></p>';
+show('▣ IL MIO DECK',content,[{label:'▶ RIPRENDI PARTITA',action:hide}]);
+
+}
+$('runDeckBtn').addEventListener('click',viewRunDeck);
+function autoBoost(){energy-=3;const kinds=['slow','wide','shield'],kind=kinds[boostIndex++%3];if(kind==='slow'){slowUntil=performance.now()+4000;toast('⚡ SLOW-MO AUTOMATICO')}else if(kind==='wide'){wideNext=true;toast('⚡ WIDE AUTOMATICO')}else{shield=Math.min(3,shield+1);toast('◆ SCUDO AUTOMATICO')}sfx('boost')}function pickCards(){
+state='cards';const hasLegend=runDeck.some(id=>upgrades.find(c=>c.id===id)?.rarity==='legendary');
+const pool=upgrades.filter(x=>save.unlocked.includes(x.id)&&(x.rarity!=='legendary'||hasLegend)&&
+runDeck.some(id=>{const old=upgrades.find(c=>c.id===id);return old&&(x.rarity==='legendary'?old.rarity==='legendary':old.rarity!=='legendary')&&(x.id!==id||runDeck.filter(k=>k===x.id).length<x.max)}));
+const weight=x=>x.rarity==='legendary'?1:x.rarity==='rare'?(up.lucky?7:3):10;
+const available=[...pool],selected=[];
+while(selected.length<3&&available.length){let total=available.reduce((n,x)=>n+weight(x),0),roll=Math.random()*total,idx=0;for(;idx<available.length-1;idx++){roll-=weight(available[idx]);if(roll<0)break}selected.push(available.splice(idx,1)[0])}
+cards=selected;showCardExchange(-1,-1);
+}
+function showCardExchange(chosen,discard){state='cards';const selected=cards[chosen];
+const deckCards=runDeck.map(id=>upgrades.find(c=>c.id===id));
+const allowed=x=>!!selected&&x&&(selected.rarity==='legendary'?x.rarity==='legendary':x.rarity!=='legendary')&&(selected.id!==x.id||runDeck.filter(id=>id===selected.id).length<selected.max);
+const html='<p>CENTRO '+hits+' · Scegli una nuova carta e quella da scartare.</p>'+ 
+'<div class="section-label">01 / NUOVE CARTE</div><div class="card-grid">'+(cards.length?cards.map((x,i)=>renderCardTile(x,i,i===chosen,false)).join(''):'<p>Nessuna carta disponibile</p>')+'</div>'+ 
+'<div class="section-label">02 / IL TUO DECK · 5 / 5</div><div class="deck-grid">'+deckCards.map((x,i)=>renderCardTile(x,i,i===discard,selected?!allowed(x):false,true)).join('')+'</div>'+ 
+'<div class="section-label">EFFETTI DELLE TUE 5 CARTE</div><div class="owned-effects">'+deckCards.map((x,i)=>'<div class="owned-effect '+x.rarity+(i===discard?' discard':'')+'">'+iconMarkup(x.id,x.rarity)+'<div><strong>'+(i+1)+'. '+x.name+(deckCards.filter(c=>c.id===x.id).length>1?' ×'+deckCards.filter(c=>c.id===x.id).length:'')+'</strong>'+x.desc+(selected&&!allowed(x)?' <b>🔒 NON SOSTITUIBILE</b>':'')+'</div></div>').join('')+'</div>'+ 
+'<div class="swap-preview">'+(selected&&discard>=0?'<b>ANTEPRIMA DELLO SCAMBIO</b><div class="swap-compare"><div class="compare-side old"><small>− CARTA SCARTATA</small><strong>'+deckCards[discard].name+'</strong>'+deckCards[discard].desc+'</div><div class="compare-side new"><small>+ NUOVA CARTA</small><strong>'+selected.name+'</strong>'+selected.desc+'</div></div><small>Gli effetti della carta scartata terminano; le cariche boost già accumulate rimangono.</small>':selected?'Ora seleziona la carta del tuo deck da scartare.':'Seleziona una delle tre carte proposte.')+'</div>';
+const buttons=[{label:'✓ CONFERMA SCAMBIO',disabled:!selected||discard<0,action:()=>commitCardSwap(chosen,discard)},{label:'▶ SALTA SCAMBIO',secondary:true,action:continueAfterCards}];
+show('SCAMBIO CARTE',html,buttons);
+document.querySelectorAll('.card-grid [data-card-index]').forEach(b=>b.addEventListener('click',()=>showCardExchange(Number(b.dataset.cardIndex),-1)));
+document.querySelectorAll('.deck-grid [data-card-index]').forEach(b=>b.addEventListener('click',()=>showCardExchange(chosen,Number(b.dataset.cardIndex))));
+
+}
+function commitCardSwap(chosen,discard){const x=cards[chosen],oldId=runDeck[discard],old=upgrades.find(c=>c.id===oldId);if(!x||!old)return;
+if(x.rarity==='legendary'&&old.rarity!=='legendary'||x.rarity!=='legendary'&&old.rarity==='legendary')return;
+if(x.id===oldId&&runDeck.filter(id=>id===x.id).length>=x.max)return;
+up[oldId]=Math.max(0,up[oldId]-1);runDeck[discard]=x.id;up[x.id]++;
+if(x.id==='shield')shield=Math.min(3,shield+1);
+if(x.id==='recall'){recallUsed=true;forcedCircleUntil=hits+5;shapeId=0;nextShapeAt=forcedCircleUntil}
+sfx('cards');continueAfterCards();
+}
+function continueAfterCards(){if(pendingMutation){pendingMutation=false;addMutation()}else hide()}function addMutation(){const available=mutations.filter(x=>!mut.includes(x.id));if(!available.length){hide();return}const x=available[rand(available.length)];mut.push(x.id);show('⚠ MUTAZIONE','<p class="mut">'+x.name+'</p><p>'+x.desc+'</p><small>Le mutazioni restano fino al game over.</small>',[{label:'▶ CONTINUA',action:hide}]);sfx('mutation')}function animateGameOverScore(total){
+ const el=$('finalScore');
+ if(!el)return;
+ const begin=performance.now(),duration=520;
+ function tick(t){
+  if(!el.isConnected)return;
+  const progress=Math.min(1,(t-begin)/duration);
+  const eased=1-Math.pow(1-progress,3);
+  el.textContent=Math.round(total*eased).toLocaleString('it-IT');
+  if(progress<1)requestAnimationFrame(tick);
+ }
+ requestAnimationFrame(tick);
+}
+function end(){
+ state='over';
+ save.gamesPlayed++;save.bestPerfects=Math.max(save.bestPerfects||0,perfects);if(mode==='arcade')save.bestArcadeHits=Math.max(save.bestArcadeHits||0,hits);checkAchievements();
+ const earned=mode==='rogue'?Math.floor((Math.floor(hits/5)*5+Math.floor(perfects/10)*3+Math.floor(hits/25)*10+Math.floor(hits/50)*25)*(1+up.core*.25+up.core20*.20+up.investor*.10)):0;
+ if(mode==='rogue'){
+  save.totalRogueHits+=hits;
+  save.bestRogueHits=Math.max(save.bestRogueHits,hits);
+  if(save.bestRogueHits>=100)save.legendGate=true;
+ }
+ save.cores+=earned;
+ let isBest=false;
+ if(mode==='rogue'&&score>save.bestRogue){save.bestRogue=score;isBest=true}
+ if(mode==='arcade'&&score>save.bestArcade){save.bestArcade=score;isBest=true}
+ persist();ui();
+ const taglines=['ANCORA UNO?','QUASI PERFETTO','PUOI FARE MEGLIO','UN ALTRO TENTATIVO?'];
+ const tagline=taglines[Math.floor(Math.random()*taglines.length)];
+ const best=mode==='rogue'?save.bestRogue:save.bestArcade;
+ const html='<div class="over-subtitle">— RUN TERMINATA —</div>'+
+ '<p class="over-tagline">'+tagline+'</p>'+
+ '<div class="over-stats"><div class="over-caption">PUNTEGGIO FINALE</div>'+
+ '<div class="over-score" id="finalScore">0</div>'+
+ (isBest?'<div class="over-record over-new">★ NUOVO RECORD! ★</div>':'<div class="over-record">RECORD '+best.toLocaleString('it-IT')+'</div>')+
+ '<div class="over-grid">'+
+ '<div><b>'+hits+'</b><small>COLPI</small></div>'+
+ '<div><b>'+perfects+'</b><small>PERFECT</small></div>'+
+ '<div><b>x'+maxRunCombo+'</b><small>MAX COMBO</small></div>'+
+ '</div></div>'+
+ (mode==='rogue'?'<div class="over-cores"><strong>◆ +'+earned+' PIXEL CORE</strong><small>Ricompensa ottenuta</small></div>':'');
+ const actions=[{label:'↻ RIPROVA',action:()=>start(mode)},{label:'⌂ MENU',secondary:true,action:menu}];
+ if(mode==='rogue')actions.push({label:'▣ DECK',secondary:true,action:()=>deckBuilder()});
+ show('GAME OVER',html,actions);
+ $('panel').classList.add('game-over-panel');
+ animateGameOverScore(score);
+ sfx('gameover');
+}
+function hit(){if(state!=='playing')return;const d=Math.abs(diff(angle,target));if(d<=half()||(secondActive&&Math.abs(diff(angle,secondTarget))<=half())){const perf=d<=perfectHalf();memoryArmed=false;rhythmArmed=false;hits++;combo++;checkAchievements();const mult=Math.min(5,1+Math.floor(combo/3));maxRunCombo=Math.max(maxRunCombo,mult);const points=(perf?200*(up.gold?3:1+up.perfect):100)*mult;score+=points;if(perf){const impact=point(angle);triggerPerfectFx(impact.x,impact.y);perfects++;perfectStreak++;checkAchievements();energy+=1+(up.charge&&perfectStreak%3===0?2:0)+(up.battery&&perfects%2===0?1:0);if(up.lord&&perfectStreak%5===0){slowUntil=performance.now()+4000;toast('★ TIME LORD!')} toast('PERFECT +'+points);sfx('perfect')}else{perfectStreak=0;toast('GOOD +'+points);sfx('good')}if(up.memory&&perfectStreak>0&&perfectStreak%3===0)memoryArmed=true;if(up.rhythm&&hits%5===0)rhythmArmed=true;if(up.saver&&hits%10===0)energy+=1;updateShape();if(mut.includes('reverse')&&!(up.master&&hits%2===0))speed=-speed;else speed=Math.abs(speed);speed=Math.sign(speed||1)*Math.min(5.9,1.9+hits*.095*(1-Math.min(.45,up.steady*.15)));wideNext=false;if(mode==='rogue'&&up.immortal&&hits%10===0)shield=Math.min(3,shield+1);nextTarget();while(energy>=3)autoBoost();ui();if(mode==='rogue'&&hits%5===0){pendingMutation=hits%10===0;pickCards()}else if(hits%5===0){toast('★ SHAPE SHIFT ★');sfx('shape')}}else if(shield>0){memoryArmed=false;rhythmArmed=false;shield--;if(!up.keeper)combo=0;perfectStreak=0;nextTarget();toast('◆ SCUDO SALVA!');sfx('shield');ui()}else if(mode==='rogue'&&up.wind&&!windUsed){memoryArmed=false;rhythmArmed=false;windUsed=true;perfectStreak=0;combo=0;nextTarget();toast('♥ SECOND WIND!');sfx('shield');ui()}else end()}
+function loop(t){raf=requestAnimationFrame(loop);if(state==='playing'){if(last){let dt=Math.min(.05,(t-last)/1000);angle=norm(angle+speed*dt*(t<slowUntil?.52:1)*Math.max(.7,1-up.slow*.1)*(rhythmArmed?Math.max(.8,1-up.rhythm*.05):1))}last=t}else last=0;draw()}$('tap').addEventListener('click',hit);
+document.addEventListener('pointerdown',e=>{
+ if(state!=='playing'||!save.freeTouch)return;
+ if(e.target.closest('button,a,input,select,textarea,[role="button"],#overlay'))return;
+ hit();
+});window.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();hit()}});document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='playing'){state='paused';show('IN PAUSA','<p>Riprendi quando vuoi.</p>',[{label:'▶ RIPRENDI',action:hide}])}last=0});menu();if(starterJustGranted){const names=save.starterCards.map(id=>upgrades.find(x=>x.id===id)?.name||id);show('🎁 STARTER DECK SBLOCCATO','<p>Hai ricevuto <b>5 carte comuni casuali gratuite</b>! La tua <b>BUILD 1</b> e gia pronta.</p><p>'+names.map(n=>'◆ '+n).join('<br>')+'</p><p>Le copie extra si acquistano nell’Officina.</p>',[{label:'▶ GIOCA ROGUELITE',action:()=>start('rogue')},{label:'▣ VEDI LA BUILD',secondary:true,action:()=>deckBuilder(0)},{label:'⌂ MENU',secondary:true,action:menu}]);}raf=requestAnimationFrame(loop);
+})();</script><script>
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+ window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(err => console.warn('Offline non disponibile:',err)));
+}
+</script>
+</body></html>
