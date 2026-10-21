@@ -1,4 +1,4 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0a0e19"><title>ONE MORE: Retro Shift — v2.24</title><link rel="manifest" href="./manifest.webmanifest">
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0a0e19"><title>ONE MORE: Retro Shift — v2.25</title><link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -272,7 +272,7 @@ button:focus-visible{outline:2px solid #f5f6ff;outline-offset:3px}
 .fullscreen-hint strong{color:#b6ffd1}.fullscreen-hint button{background:#78eab9;border:0;padding:12px;color:#0d2231;font:inherit;font-weight:bold;cursor:pointer}
 @media(max-height:740px) and (max-width:540px){.home-fullscreen{margin-top:3px;min-height:36px;padding:4px 10px}}
 
-/* v2.24: iPhone home occupies the available display instead of a centered card */
+/* v2.25: iPhone home occupies the available display instead of a centered card */
 @media (max-width: 540px) and (orientation:portrait) {
  body:has(#mainMenuActions) .shell{
   width:100%;max-width:none;height:100vh;height:100dvh;
@@ -313,7 +313,7 @@ button:focus-visible{outline:2px solid #f5f6ff;outline-offset:3px}
  .shell{height:100dvh}
 }
 
-/* v2.24: anchor mobile menu to the REAL visible viewport, including bottom */
+/* v2.25: anchor mobile menu to the REAL visible viewport, including bottom */
 @media (max-width:540px) and (orientation:portrait){
  html,body{height:100%;min-height:0;margin:0;overflow:hidden}
  body:has(#mainMenuActions) .shell{
@@ -346,7 +346,7 @@ button:focus-visible{outline:2px solid #f5f6ff;outline-offset:3px}
  body:has(#mainMenuActions) .home-fullscreen{display:none}
 }
 
-/* v2.24: preserve top branding and fill available screen, including bottom */
+/* v2.25: preserve top branding and fill available screen, including bottom */
 @media (max-width:540px) and (orientation:portrait){
  html,body{height:100%;min-height:100%;overflow:hidden}
  .shell{position:fixed;inset:0;width:100%;max-width:none;height:100%;height:100dvh;max-height:none;min-height:0;overflow:hidden;padding:calc(env(safe-area-inset-top) + 8px) 9px calc(env(safe-area-inset-bottom) + 8px)}
@@ -389,7 +389,30 @@ button:focus-visible{outline:2px solid #f5f6ff;outline-offset:3px}
  body:has(#mainMenuActions) .home-mode{min-height:72px}
  body:has(#mainMenuActions) .home-tools button{min-height:52px}
 }
-</style></head><body><main class="shell"><header><div><div class="brand">ONE MORE</div><div class="subtitle">RETRO SHIFT // ROGUELITE 2.24</div></div><div class="game-header-actions"><button id="settingsBtn" class="game-settings-btn" type="button" hidden aria-label="Impostazioni partita" title="Impostazioni partita">⚙</button><button id="runDeckBtn" class="run-deck-btn" type="button" hidden>▣ IL MIO DECK</button></div><div class="stats">CORE <b id="core">0</b><br>RECORD <b id="best">0</b></div></header><div class="hud"><span>COLPI <b id="hits">0</b></span><span id="shape">CERCHIO</span><span>COMBO <b id="combo">x1</b></span></div><div class="screen"><canvas id="game" width="400" height="400" aria-label="Arena di gioco"></canvas><div id="toast" class="toast"></div><div id="medalNotice" class="medal-notice" hidden aria-live="polite"></div><div id="overlay" class="overlay"><div id="panel" class="panel"></div></div></div><div class="footer" id="gameFooter"><div class="row" style="width:min(100%,400px)"><span id="score">PUNTI 0</span><span id="status">BOOST: NESSUNO</span></div><div class="charge-label"><span>⚡ CARICHE BOOST</span><span id="chargeCount">0 / 3</span></div><div class="meter" role="progressbar" aria-label="Cariche per il prossimo boost" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><div id="energy"></div></div><button id="tap" class="tap">● STOP!</button></div></main><script>
+
+/* v2.25: tall portrait arena. Preserve circular geometry and use all free space. */
+@media (max-width:540px) and (orientation:portrait){
+ body:not(:has(#mainMenuActions)) .screen{
+  flex:1 1 auto;min-height:0;margin:8px 0 5px;
+  background-color:#0e1729;
+  background-image:radial-gradient(circle,#24354e 1px,transparent 1.6px);
+  background-size:25px 25px;
+  background-position:center center;
+  border:1px solid #15263e;
+  display:flex;align-items:center;justify-content:center;
+ }
+ body:not(:has(#mainMenuActions)) #game{
+  display:block;flex:0 0 auto;width:100%;height:100%;max-width:none;max-height:none;
+  aspect-ratio:auto;object-fit:fill;
+ }
+ body:not(:has(#mainMenuActions)) #gameFooter:not([hidden]){
+  margin-top:0;padding:4px 0 3px;gap:5px;
+ }
+ body:not(:has(#mainMenuActions)) #gameFooter:not([hidden]) .tap{
+  min-height:clamp(65px,9dvh,88px);
+ }
+}
+</style></head><body><main class="shell"><header><div><div class="brand">ONE MORE</div><div class="subtitle">RETRO SHIFT // ROGUELITE 2.25</div></div><div class="game-header-actions"><button id="settingsBtn" class="game-settings-btn" type="button" hidden aria-label="Impostazioni partita" title="Impostazioni partita">⚙</button><button id="runDeckBtn" class="run-deck-btn" type="button" hidden>▣ IL MIO DECK</button></div><div class="stats">CORE <b id="core">0</b><br>RECORD <b id="best">0</b></div></header><div class="hud"><span>COLPI <b id="hits">0</b></span><span id="shape">CERCHIO</span><span>COMBO <b id="combo">x1</b></span></div><div class="screen"><canvas id="game" width="400" height="400" aria-label="Arena di gioco"></canvas><div id="toast" class="toast"></div><div id="medalNotice" class="medal-notice" hidden aria-live="polite"></div><div id="overlay" class="overlay"><div id="panel" class="panel"></div></div></div><div class="footer" id="gameFooter"><div class="row" style="width:min(100%,400px)"><span id="score">PUNTI 0</span><span id="status">BOOST: NESSUNO</span></div><div class="charge-label"><span>⚡ CARICHE BOOST</span><span id="chargeCount">0 / 3</span></div><div class="meter" role="progressbar" aria-label="Cariche per il prossimo boost" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><div id="energy"></div></div><button id="tap" class="tap">● STOP!</button></div></main><script>
 (()=>{'use strict';const $=id=>document.getElementById(id),ctx=$('game').getContext('2d'),TAU=Math.PI*2,colors={bg:'#0e1729',path:'#425575',green:'#78eab9',yellow:'#ffe079',blue:'#77cfff'};const shapes=[
 {name:'CERCHIO',type:'circle'},
 {name:'QUADRATO',type:'poly',vertices:[[-1,-1],[1,-1],[1,1],[-1,1]]},
@@ -520,7 +543,16 @@ function drawPerfectFx(){
  ctx.fillStyle='#b8ffcc';ctx.fillText('PERFECT!',200,labelY);
  ctx.restore();
 }
-function draw(){ctx.fillStyle=colors.bg;ctx.fillRect(0,0,400,400);ctx.fillStyle='#1a2740';for(let x=14;x<400;x+=25)for(let y=14;y<400;y+=25)ctx.fillRect(x,y,2,2);path(0,TAU,colors.path,13);path(target-half(),target+half(),colors.green,18);path(target-perfectHalf(),target+perfectHalf(),'#f1ffc1',18);if(secondActive){path(secondTarget-half(),secondTarget+half(),'#5db5fa',17);}const p=point(angle);ctx.fillStyle=colors.yellow;ctx.fillRect(Math.round(p.x)-9,Math.round(p.y)-9,18,18);ctx.fillStyle='#fff3c2';ctx.fillRect(Math.round(p.x)-3,Math.round(p.y)-3,6,6);ctx.textAlign='center';ctx.fillStyle='#ffdf7b';ctx.font='bold 43px monospace';ctx.fillText(hits,200,204);ctx.font='12px monospace';ctx.fillStyle='#a3c1d3';ctx.fillText(shapes[shapeId].name,200,229);ctx.fillStyle=colors.blue;ctx.font='14px monospace';if(shield)ctx.fillText('◆ SHIELD '+shield,200,170);if(performance.now()<slowUntil)ctx.fillText('SLOW-MO',200,260);if(wideNext)ctx.fillText('WIDE',200,278);if(secondActive){ctx.fillStyle='#5db5fa';ctx.fillText('DOUBLE ZONE',200,295)}drawPerfectFx()}function ui(){$('hits').textContent=hits;$('score').textContent='PUNTI '+score;$('combo').textContent='x'+Math.min(5,1+Math.floor(combo/3));$('shape').textContent=shapes[shapeId].name;$('core').textContent=save.cores;$('best').textContent=mode==='rogue'?save.bestRogue:save.bestArcade;$('energy').style.width=(Math.min(3,energy)/3*100)+'%';$('chargeCount').textContent=Math.min(3,energy)+' / 3';document.querySelector('.meter').setAttribute('aria-valuenow',Math.min(3,energy));$('runDeckBtn').hidden=!(mode==='rogue'&&state==='playing');$('settingsBtn').hidden=!(state==='playing');$('status').textContent='SCUDI '+shield+' • '+(mode==='rogue'?'ROGUE':'ARCADE')}
+function draw(){
+const canvas=$('game'),rect=canvas.getBoundingClientRect();
+const portrait=window.matchMedia('(max-width:540px) and (orientation:portrait)').matches&&state!=='menu';
+const desiredHeight=portrait&&rect.width>0?Math.max(400,Math.round(400*rect.height/rect.width)):400;
+if(canvas.width!==400||canvas.height!==desiredHeight){canvas.width=400;canvas.height=desiredHeight;}
+ctx.setTransform(1,0,0,1,0,0);
+ctx.fillStyle=colors.bg;ctx.fillRect(0,0,400,canvas.height);
+ctx.fillStyle='#1a2740';for(let x=14;x<400;x+=25)for(let y=14;y<canvas.height;y+=25)ctx.fillRect(x,y,2,2);
+ctx.save();ctx.translate(0,Math.round((canvas.height-400)/2));
+path(0,TAU,colors.path,13);path(target-half(),target+half(),colors.green,18);path(target-perfectHalf(),target+perfectHalf(),'#f1ffc1',18);if(secondActive){path(secondTarget-half(),secondTarget+half(),'#5db5fa',17);}const p=point(angle);ctx.fillStyle=colors.yellow;ctx.fillRect(Math.round(p.x)-9,Math.round(p.y)-9,18,18);ctx.fillStyle='#fff3c2';ctx.fillRect(Math.round(p.x)-3,Math.round(p.y)-3,6,6);ctx.textAlign='center';ctx.fillStyle='#ffdf7b';ctx.font='bold 43px monospace';ctx.fillText(hits,200,204);ctx.font='12px monospace';ctx.fillStyle='#a3c1d3';ctx.fillText(shapes[shapeId].name,200,229);ctx.fillStyle=colors.blue;ctx.font='14px monospace';if(shield)ctx.fillText('◆ SHIELD '+shield,200,170);if(performance.now()<slowUntil)ctx.fillText('SLOW-MO',200,260);if(wideNext)ctx.fillText('WIDE',200,278);if(secondActive){ctx.fillStyle='#5db5fa';ctx.fillText('DOUBLE ZONE',200,295)}drawPerfectFx();ctx.restore()}function ui(){$('hits').textContent=hits;$('score').textContent='PUNTI '+score;$('combo').textContent='x'+Math.min(5,1+Math.floor(combo/3));$('shape').textContent=shapes[shapeId].name;$('core').textContent=save.cores;$('best').textContent=mode==='rogue'?save.bestRogue:save.bestArcade;$('energy').style.width=(Math.min(3,energy)/3*100)+'%';$('chargeCount').textContent=Math.min(3,energy)+' / 3';document.querySelector('.meter').setAttribute('aria-valuenow',Math.min(3,energy));$('runDeckBtn').hidden=!(mode==='rogue'&&state==='playing');$('settingsBtn').hidden=!(state==='playing');$('status').textContent='SCUDI '+shield+' • '+(mode==='rogue'?'ROGUE':'ARCADE')}
 const cardSymbols={slow:'◷',wide:'▰',shield:'⬡',perfect:'✶',charge:'ϟ',core:'◆',soft:'◉',core20:'◇',keeper:'♧',steady:'⌁',sweet:'◎',focus:'✦',battery:'▣',double:'⊕',lucky:'✧',wind:'♥',recall:'◌',lord:'◈',gold:'★',master:'⬢',immortal:'♜',memory:'⊞',saver:'⚡',investor:'◈',rhythm:'♫'};
 function iconMarkup(id,rarity){return '<span class="pixel-icon '+(rarity||'common')+'" aria-hidden="true">'+(cardSymbols[id]||'◆')+'</span>'}
 function decorateCardButtons(){document.querySelectorAll('#panel .btn[data-card-icon]').forEach(el=>{const id=el.dataset.cardIcon,rarity=el.dataset.rarity;const label=el.textContent;el.textContent='';el.insertAdjacentHTML('beforeend',iconMarkup(id,rarity)+'<span class="btn-text"></span>');el.querySelector('.btn-text').textContent=label})}
