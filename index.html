@@ -1,4 +1,4 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0a0e19"><title>ONE MORE: Retro Shift — v2.20</title><link rel="manifest" href="./manifest.webmanifest">
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0a0e19"><title>ONE MORE: Retro Shift — v2.21</title><link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -265,7 +265,13 @@ button:focus-visible{outline:2px solid #f5f6ff;outline-offset:3px}
  .charge-label{font-size:9px}.meter{height:9px}
  .panel{padding:8px}.home-mode{min-height:66px}.home-tools button{min-height:49px}
 }
-</style></head><body><main class="shell"><header><div><div class="brand">ONE MORE</div><div class="subtitle">RETRO SHIFT // ROGUELITE 2.19</div></div><div class="game-header-actions"><button id="settingsBtn" class="game-settings-btn" type="button" hidden aria-label="Impostazioni partita" title="Impostazioni partita">⚙</button><button id="runDeckBtn" class="run-deck-btn" type="button" hidden>▣ IL MIO DECK</button></div><div class="stats">CORE <b id="core">0</b><br>RECORD <b id="best">0</b></div></header><div class="hud"><span>COLPI <b id="hits">0</b></span><span id="shape">CERCHIO</span><span>COMBO <b id="combo">x1</b></span></div><div class="screen"><canvas id="game" width="400" height="400" aria-label="Arena di gioco"></canvas><div id="toast" class="toast"></div><div id="medalNotice" class="medal-notice" hidden aria-live="polite"></div><div id="overlay" class="overlay"><div id="panel" class="panel"></div></div></div><div class="footer" id="gameFooter"><div class="row" style="width:min(100%,400px)"><span id="score">PUNTI 0</span><span id="status">BOOST: NESSUNO</span></div><div class="charge-label"><span>⚡ CARICHE BOOST</span><span id="chargeCount">0 / 3</span></div><div class="meter" role="progressbar" aria-label="Cariche per il prossimo boost" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><div id="energy"></div></div><button id="tap" class="tap">● STOP!</button></div></main><script>
+
+.home-fullscreen{display:block;margin:7px auto 0;padding:7px 14px;min-height:40px;background:#182b3d;border:2px solid #526b83;color:#c7e6f4;font:inherit;font-size:11px;cursor:pointer;letter-spacing:.5px;max-width:100%}
+.home-fullscreen:active{transform:translateY(2px)}
+.fullscreen-hint{position:fixed;z-index:99999;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90vw,390px);padding:18px;background:#15243a;border:3px solid #8af3b9;color:#d9e9fa;box-shadow:0 0 0 9999px #000b;text-align:center;font-size:13px;line-height:1.6}
+.fullscreen-hint strong{color:#b6ffd1}.fullscreen-hint button{background:#78eab9;border:0;padding:12px;color:#0d2231;font:inherit;font-weight:bold;cursor:pointer}
+@media(max-height:740px) and (max-width:540px){.home-fullscreen{margin-top:3px;min-height:36px;padding:4px 10px}}
+</style></head><body><main class="shell"><header><div><div class="brand">ONE MORE</div><div class="subtitle">RETRO SHIFT // ROGUELITE 2.21</div></div><div class="game-header-actions"><button id="settingsBtn" class="game-settings-btn" type="button" hidden aria-label="Impostazioni partita" title="Impostazioni partita">⚙</button><button id="runDeckBtn" class="run-deck-btn" type="button" hidden>▣ IL MIO DECK</button></div><div class="stats">CORE <b id="core">0</b><br>RECORD <b id="best">0</b></div></header><div class="hud"><span>COLPI <b id="hits">0</b></span><span id="shape">CERCHIO</span><span>COMBO <b id="combo">x1</b></span></div><div class="screen"><canvas id="game" width="400" height="400" aria-label="Arena di gioco"></canvas><div id="toast" class="toast"></div><div id="medalNotice" class="medal-notice" hidden aria-live="polite"></div><div id="overlay" class="overlay"><div id="panel" class="panel"></div></div></div><div class="footer" id="gameFooter"><div class="row" style="width:min(100%,400px)"><span id="score">PUNTI 0</span><span id="status">BOOST: NESSUNO</span></div><div class="charge-label"><span>⚡ CARICHE BOOST</span><span id="chargeCount">0 / 3</span></div><div class="meter" role="progressbar" aria-label="Cariche per il prossimo boost" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><div id="energy"></div></div><button id="tap" class="tap">● STOP!</button></div></main><script>
 (()=>{'use strict';const $=id=>document.getElementById(id),ctx=$('game').getContext('2d'),TAU=Math.PI*2,colors={bg:'#0e1729',path:'#425575',green:'#78eab9',yellow:'#ffe079',blue:'#77cfff'};const shapes=[
 {name:'CERCHIO',type:'circle'},
 {name:'QUADRATO',type:'poly',vertices:[[-1,-1],[1,-1],[1,1],[-1,1]]},
@@ -560,6 +566,34 @@ function viewMedals(){
  }).join('');
  show('★ MEDAGLIE','<div class="medal-count">'+count+' / 12 SBLOCCATE</div><div class="medal-progress"><div style="width:'+(count/12*100)+'%"></div></div><div class="medal-grid">'+tiles+'</div><p class="medal-footnote">Le medaglie sono permanenti e non modificano la difficoltà. Gli obiettivi di precisione e HIT valgono in entrambe le modalità.</p>',[{label:'← TORNA AL MENU',secondary:true,action:menu}]);
 }
+function isStandaloneApp(){
+ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+}
+function syncFullscreenButtons(){
+ const active=!!document.fullscreenElement||isStandaloneApp();
+ const home=$('homeFullscreen'),setting=$('fullscreenToggle');
+ if(home)home.textContent=active?'⛶ SCHERMO INTERO ATTIVO':'⛶ SCHERMO INTERO';
+ if(setting)setting.textContent=active?'SCHERMO INTERO: ATTIVO ✓':'⛶ ATTIVA SCHERMO INTERO';
+}
+function toggleFullscreen(){
+ if(document.fullscreenElement){
+  if(document.exitFullscreen)document.exitFullscreen().catch(()=>{});
+  return;
+ }
+ if(isStandaloneApp()){syncFullscreenButtons();return}
+ const el=document.documentElement;
+ if(el.requestFullscreen){
+  el.requestFullscreen({navigationUI:'hide'}).then(syncFullscreenButtons).catch(()=>showFullscreenHelp());
+ }else showFullscreenHelp();
+}
+function showFullscreenHelp(){
+ const existing=$('fullscreenHint');if(existing){existing.remove();return}
+ const hint=document.createElement('div');hint.id='fullscreenHint';hint.className='fullscreen-hint';
+ hint.innerHTML='<strong>IPHONE · SCHERMO INTERO</strong><p>In Safari tocca Condividi → Aggiungi alla schermata Home. Poi apri ONE MORE dalla nuova icona: il gioco si avvierà senza la barra del browser.</p><button type="button" id="closeFullscreenHint">HO CAPITO</button>';
+ document.body.append(hint);
+ $('closeFullscreenHint').addEventListener('click',()=>hint.remove());
+}
+document.addEventListener('fullscreenchange',syncFullscreenButtons);
 function menu(){
  $('medalNotice').hidden=true;medalQueue=[];clearTimeout(medalNoticeTimer);
  state='menu';$('gameFooter').hidden=true;ui();
@@ -575,7 +609,8 @@ function menu(){
   <button type="button" id="homeMedals"><span>★</span>MEDAGLIE</button>
  </div>
  <div class="home-core-count">◆ ${save.cores} PIXEL CORE</div>
- <button type="button" class="home-help" id="homeHelp">? COME SI GIOCA</button>`;
+ <button type="button" class="home-help" id="homeHelp">? COME SI GIOCA</button>
+ <button type="button" class="home-fullscreen" id="homeFullscreen">⛶ SCHERMO INTERO</button>`;
  show('RETRO SHIFT',html,[]);
  $('panel').classList.add('home-panel');
  $('homeRogue').addEventListener('click',()=>start('rogue'));
@@ -584,6 +619,7 @@ function menu(){
  $('homeShop').addEventListener('click',shop);
  $('homeMedals').addEventListener('click',viewMedals);
  $('homeHelp').addEventListener('click',help);
+ $('homeFullscreen').addEventListener('click',toggleFullscreen);
 }
 function help(){$('gameFooter').hidden=true;state='help';const html=`
 <p style="text-align:left"><b>♪ EFFETTI SONORI</b><br>Effetti retro a 8-bit per colpi, PERFECT, boost, scudi, carte, mutazioni, medaglie e Game Over. Si possono disattivare in <b>⚙ IMPOSTAZIONI</b>, dal menu o durante una partita. L'opzione viene salvata nel browser. La musica non è ancora disponibile.</p>
@@ -641,10 +677,14 @@ function renderMainMenuSettings(){
  '<button type="button" id="touchModeToggle" class="btn secondary" aria-pressed="'+save.freeTouch+'">TOCCO LIBERO: '+touchLabel+'</button>'+
  '<small>Disattivato per impostazione predefinita. Il pulsante STOP funziona sempre, in entrambe le modalità.</small></div>'+
  '<div class="touch-setting"><strong>♪ EFFETTI SONORI</strong><p>Suoni arcade per PERFECT, colpi, boost, medaglie e Game Over. Nessuna musica di sottofondo.</p>'+
- '<button type="button" id="soundToggle" class="btn secondary" aria-pressed="'+save.soundEnabled+'">EFFETTI SONORI: '+soundLabel+'</button></div>';
+ '<button type="button" id="soundToggle" class="btn secondary" aria-pressed="'+save.soundEnabled+'">EFFETTI SONORI: '+soundLabel+'</button></div>'+
+ '<div class="touch-setting"><strong>⛶ SCHERMO INTERO</strong><p>Su iPhone, aggiungi ONE MORE alla schermata Home da Safari e aprilo dalla sua icona.</p>'+
+ '<button type="button" id="fullscreenToggle" class="btn secondary">⛶ ATTIVA SCHERMO INTERO</button></div>';
  show('⚙ IMPOSTAZIONI',html,[{label:'← TORNA AL MENU',secondary:true,action:menu}]);
  $('touchModeToggle').addEventListener('click',()=>{save.freeTouch=!save.freeTouch;persist();renderMainMenuSettings()});
  $('soundToggle').addEventListener('click',()=>{save.soundEnabled=!save.soundEnabled;persist();if(save.soundEnabled)sfx('click');renderMainMenuSettings()});
+ $('fullscreenToggle').addEventListener('click',toggleFullscreen);
+ syncFullscreenButtons();
  
 }
 function renderGameSettings(){
