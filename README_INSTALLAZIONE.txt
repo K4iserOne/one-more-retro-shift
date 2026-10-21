@@ -1,4 +1,4 @@
-ONE MORE: RETRO SHIFT — PWA v2.20
+ONE MORE: RETRO SHIFT — PWA v2.22
 ==================================
 Questa cartella contiene una web app installabile su iPhone; NON è un IPA.
 
@@ -24,3 +24,14 @@ I salvataggi del file HTML aperto da Windows NON si trasferiscono automaticament
 Evita di cancellare i dati del sito o disinstallare la PWA senza un futuro sistema di esportazione.
 
 NOTA: questa PWA non è stata pubblicata su un dominio HTTPS e non è stata collaudata fisicamente su iPhone.
+
+SCHERMO INTERO:
+- iPhone: la PWA avviata dall'icona Home usa la modalità standalone, senza barra di Safari.
+- Chrome/Edge su Windows e Android: premi ⛶ SCHERMO INTERO nel menu.
+- Safari iPhone non supporta normalmente requestFullscreen per una pagina HTML generica.
+- Se hai già pubblicato v2.20, carica i nuovi file sovrascrivendo quelli vecchi, poi riapri la PWA.
+
+v2.22: menu su iPhone esteso in altezza, senza intestazione di partita, pannello
+a tutta larghezza e pulsanti adattivi. Lo schermo intero iOS dipende dall'avvio
+dall'icona Home (PWA standalone); la barra di stato di iOS può rimanere visibile.
+Aggiornare index.html e sw.js su GitHub Pages.
