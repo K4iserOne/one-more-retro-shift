@@ -1,4 +1,4 @@
-ONE MORE: RETRO SHIFT — PWA v2.23
+ONE MORE: RETRO SHIFT — PWA v2.24
 ==================================
 Questa cartella contiene una web app installabile su iPhone; NON è un IPA.
 
@@ -31,12 +31,14 @@ SCHERMO INTERO:
 - Safari iPhone non supporta normalmente requestFullscreen per una pagina HTML generica.
 - Se hai già pubblicato v2.20, carica i nuovi file sovrascrivendo quelli vecchi, poi riapri la PWA.
 
-v2.23: menu su iPhone esteso in altezza, senza intestazione di partita, pannello
+v2.24: menu su iPhone esteso in altezza, senza intestazione di partita, pannello
 a tutta larghezza e pulsanti adattivi. Lo schermo intero iOS dipende dall'avvio
 dall'icona Home (PWA standalone); la barra di stato di iOS può rimanere visibile.
 Aggiornare index.html e sw.js su GitHub Pages.
 
-v2.23: corretto il menu iPhone ancorando pannello e comandi alla viewport visibile
+v2.24: corretto il menu iPhone ancorando pannello e comandi alla viewport visibile
 e utilizzando la sua altezza reale; i pulsanti audio/impostazioni sono ora nel
 flusso del layout, non più sovrapposti al bordo del pannello. Il pannello
 riempie lo spazio verticale fino ai comandi inferiori.
+
+v2.24: ripristinata intestazione ONE MORE nel menu, menu e controlli ancorati alla zona di gioco e alla parte inferiore dello schermo; area gameplay flessibile e STOP a tutta larghezza.

@@ -1,4 +1,4 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0a0e19"><title>ONE MORE: Retro Shift — v2.23</title><link rel="manifest" href="./manifest.webmanifest">
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0a0e19"><title>ONE MORE: Retro Shift — v2.24</title><link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -272,7 +272,7 @@ button:focus-visible{outline:2px solid #f5f6ff;outline-offset:3px}
 .fullscreen-hint strong{color:#b6ffd1}.fullscreen-hint button{background:#78eab9;border:0;padding:12px;color:#0d2231;font:inherit;font-weight:bold;cursor:pointer}
 @media(max-height:740px) and (max-width:540px){.home-fullscreen{margin-top:3px;min-height:36px;padding:4px 10px}}
 
-/* v2.23: iPhone home occupies the available display instead of a centered card */
+/* v2.24: iPhone home occupies the available display instead of a centered card */
 @media (max-width: 540px) and (orientation:portrait) {
  body:has(#mainMenuActions) .shell{
   width:100%;max-width:none;height:100vh;height:100dvh;
@@ -313,7 +313,7 @@ button:focus-visible{outline:2px solid #f5f6ff;outline-offset:3px}
  .shell{height:100dvh}
 }
 
-/* v2.23: anchor mobile menu to the REAL visible viewport, including bottom */
+/* v2.24: anchor mobile menu to the REAL visible viewport, including bottom */
 @media (max-width:540px) and (orientation:portrait){
  html,body{height:100%;min-height:0;margin:0;overflow:hidden}
  body:has(#mainMenuActions) .shell{
@@ -345,7 +345,51 @@ button:focus-visible{outline:2px solid #f5f6ff;outline-offset:3px}
  body:has(#mainMenuActions) .menu-icon-btn{width:clamp(48px,13vw,62px);height:clamp(48px,7vh,62px)}
  body:has(#mainMenuActions) .home-fullscreen{display:none}
 }
-</style></head><body><main class="shell"><header><div><div class="brand">ONE MORE</div><div class="subtitle">RETRO SHIFT // ROGUELITE 2.23</div></div><div class="game-header-actions"><button id="settingsBtn" class="game-settings-btn" type="button" hidden aria-label="Impostazioni partita" title="Impostazioni partita">⚙</button><button id="runDeckBtn" class="run-deck-btn" type="button" hidden>▣ IL MIO DECK</button></div><div class="stats">CORE <b id="core">0</b><br>RECORD <b id="best">0</b></div></header><div class="hud"><span>COLPI <b id="hits">0</b></span><span id="shape">CERCHIO</span><span>COMBO <b id="combo">x1</b></span></div><div class="screen"><canvas id="game" width="400" height="400" aria-label="Arena di gioco"></canvas><div id="toast" class="toast"></div><div id="medalNotice" class="medal-notice" hidden aria-live="polite"></div><div id="overlay" class="overlay"><div id="panel" class="panel"></div></div></div><div class="footer" id="gameFooter"><div class="row" style="width:min(100%,400px)"><span id="score">PUNTI 0</span><span id="status">BOOST: NESSUNO</span></div><div class="charge-label"><span>⚡ CARICHE BOOST</span><span id="chargeCount">0 / 3</span></div><div class="meter" role="progressbar" aria-label="Cariche per il prossimo boost" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><div id="energy"></div></div><button id="tap" class="tap">● STOP!</button></div></main><script>
+
+/* v2.24: preserve top branding and fill available screen, including bottom */
+@media (max-width:540px) and (orientation:portrait){
+ html,body{height:100%;min-height:100%;overflow:hidden}
+ .shell{position:fixed;inset:0;width:100%;max-width:none;height:100%;height:100dvh;max-height:none;min-height:0;overflow:hidden;padding:calc(env(safe-area-inset-top) + 8px) 9px calc(env(safe-area-inset-bottom) + 8px)}
+ header{flex:0 0 auto;min-height:43px;gap:5px}
+ .brand{font-size:clamp(17px,4.9vw,23px)}
+ .subtitle{font-size:clamp(8px,2.35vw,10px);letter-spacing:1px}
+ .stats{font-size:11px}
+ .hud{flex:0 0 auto;padding:7px 2px 2px}
+ .screen{flex:1 1 auto;min-height:0;width:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
+ canvas{width:min(100%,calc(100dvh - 285px));max-width:100%;max-height:100%;height:auto;object-fit:contain}
+ #gameFooter:not([hidden]){flex:0 0 auto;margin-top:auto;padding:6px 0 4px;gap:7px}
+ #gameFooter:not([hidden]) .tap{width:100%;min-height:clamp(70px,10dvh,100px);font-size:clamp(21px,6vw,29px)}
+ #gameFooter:not([hidden]) .charge-label,#gameFooter:not([hidden]) .meter,#gameFooter:not([hidden]) .row{width:100%!important}
+ body:has(#mainMenuActions) .shell{position:fixed;inset:0;height:100%;height:100dvh;max-height:none;padding:calc(env(safe-area-inset-top) + 8px) 9px calc(env(safe-area-inset-bottom) + 8px)}
+ body:has(#mainMenuActions) header{display:flex!important;position:relative;z-index:5;flex:0 0 auto}
+ body:has(#mainMenuActions) .hud{display:none!important}
+ body:has(#mainMenuActions) .screen{position:relative;flex:1 1 auto;height:auto;min-height:0;overflow:visible}
+ body:has(#mainMenuActions) #overlay{
+  position:absolute;inset:0;width:100%;height:100%;min-height:0;
+  display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;
+  padding:8px 2px 4px;overflow:hidden;background:transparent;gap:0;
+ }
+ body:has(#mainMenuActions) #panel.home-panel{
+  flex:1 1 auto;min-height:0;max-height:none;width:100%;max-width:none;
+  margin:0 0 10px;padding:clamp(10px,2vh,19px) clamp(10px,3vw,18px);
+  display:flex;flex-direction:column;justify-content:space-evenly;overflow-y:auto;
+ }
+ body:has(#mainMenuActions) .main-menu-actions{
+  position:static;transform:none;flex:0 0 auto;width:100%;max-width:none;
+  min-height:clamp(54px,8dvh,76px);margin:0;padding:0;
+  display:flex;align-items:center;justify-content:center;gap:clamp(9px,3vw,18px)
+ }
+ body:has(#mainMenuActions) .menu-icon-btn{width:clamp(46px,12vw,60px);height:clamp(46px,7dvh,60px)}
+ body:has(#mainMenuActions) .home-mode{min-height:clamp(76px,11dvh,125px)}
+ body:has(#mainMenuActions) .home-tools button{min-height:clamp(58px,8dvh,88px)}
+ body:has(#mainMenuActions) .home-fullscreen{display:none}
+}
+@media (max-width:540px) and (orientation:portrait) and (max-height:680px){
+ body:has(#mainMenuActions) #panel.home-panel{justify-content:flex-start}
+ body:has(#mainMenuActions) .home-mode{min-height:72px}
+ body:has(#mainMenuActions) .home-tools button{min-height:52px}
+}
+</style></head><body><main class="shell"><header><div><div class="brand">ONE MORE</div><div class="subtitle">RETRO SHIFT // ROGUELITE 2.24</div></div><div class="game-header-actions"><button id="settingsBtn" class="game-settings-btn" type="button" hidden aria-label="Impostazioni partita" title="Impostazioni partita">⚙</button><button id="runDeckBtn" class="run-deck-btn" type="button" hidden>▣ IL MIO DECK</button></div><div class="stats">CORE <b id="core">0</b><br>RECORD <b id="best">0</b></div></header><div class="hud"><span>COLPI <b id="hits">0</b></span><span id="shape">CERCHIO</span><span>COMBO <b id="combo">x1</b></span></div><div class="screen"><canvas id="game" width="400" height="400" aria-label="Arena di gioco"></canvas><div id="toast" class="toast"></div><div id="medalNotice" class="medal-notice" hidden aria-live="polite"></div><div id="overlay" class="overlay"><div id="panel" class="panel"></div></div></div><div class="footer" id="gameFooter"><div class="row" style="width:min(100%,400px)"><span id="score">PUNTI 0</span><span id="status">BOOST: NESSUNO</span></div><div class="charge-label"><span>⚡ CARICHE BOOST</span><span id="chargeCount">0 / 3</span></div><div class="meter" role="progressbar" aria-label="Cariche per il prossimo boost" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><div id="energy"></div></div><button id="tap" class="tap">● STOP!</button></div></main><script>
 (()=>{'use strict';const $=id=>document.getElementById(id),ctx=$('game').getContext('2d'),TAU=Math.PI*2,colors={bg:'#0e1729',path:'#425575',green:'#78eab9',yellow:'#ffe079',blue:'#77cfff'};const shapes=[
 {name:'CERCHIO',type:'circle'},
 {name:'QUADRATO',type:'poly',vertices:[[-1,-1],[1,-1],[1,1],[-1,1]]},
